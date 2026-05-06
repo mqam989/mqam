@@ -1,80 +1,115 @@
-function loadQ() {
-  const q = S.qs[S.idx];
-  const tot = S.qs.length;
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>مقام - اختبار</title>
+<style>
+body { font-family: Arial; direction: rtl; text-align:center; background:#f4f6fb; }
+.container { max-width:600px; margin:auto; padding:20px; }
+button { padding:10px; margin:5px; width:100%; cursor:pointer; }
+.correct { background: #15803d; color:white; }
+.wrong { background: #b91c1c; color:white; }
+.selected { background:#ddd; }
+</style>
+</head>
 
-  // البيانات الأساسية
-  qCnt.textContent = `${S.idx + 1}/${tot}`;
-  qBF.style.width = `${Math.round((S.idx / tot) * 100)}%`;
-  qSk.textContent = getSkLbl(q);
-  qText.textContent = q.text;
+<body>
 
-  // SVG
-  qSvg.style.display = q.svg ? "flex" : "none";
-  qSvg.innerHTML = q.svg || "";
+<div class="container">
+  <h2>📚 اختبار</h2>
+  <div id="qCnt">1/10</div>
+  <h3 id="qText">...</h3>
 
-  // الخيارات
-  const letters = ["أ", "ب", "ج", "د"];
-  const opts = Array.isArray(q.opts) ? q.opts : JSON.parse(q.opts || "[]");
+  <div id="opts"></div>
 
-  optsEl.innerHTML = opts.map((o, i) => `
-    <button class="opt" onclick="pick(${i})">
-      <span>${letters[i]}</span>
-      <span>${o}</span>
-      <span id="o${i}"></span>
-    </button>
-  `).join("");
+  <br>
+  <button onclick="confirmAns()">تأكيد</button>
+  <button onclick="nextQ()">التالي</button>
+</div>
 
-  // إعادة التهيئة
-  S.answered = false;
-  S.selected = null;
-  expBox.classList.remove("show");
-  confBtn.style.display = "";
-  confBtn.className = "confirm-btn inactive";
-  nextBtn.className = "next-btn inactive";
+<script>
+// ====== SUPABASE ======
+const SB_URL = "https://YOUR_URL.supabase.co";
+const SB_KEY = "YOUR_KEY";
+
+async function sb(query) {
+  const res = await fetch(`${SB_URL}/rest/v1/questions?select=*${query}`, {
+    headers: {
+      "apikey": SB_KEY,
+      "Authorization": `Bearer ${SB_KEY}`
+    }
+  });
+  return await res.json();
 }
 
+// ====== STATE ======
+let S = {
+  qs: [],
+  idx: 0,
+  ans: [],
+  selected: null,
+  answered: false
+};
+
+// ====== LOAD QUESTIONS ======
+async function loadQuestions() {
+  const data = await sb("&limit=10");
+  S.qs = data;
+  S.idx = 0;
+  S.ans = [];
+  loadQ();
+}
+
+// ====== LOAD QUESTION ======
+function loadQ() {
+  const q = S.qs[S.idx];
+  const total = S.qs.length;
+
+  document.getElementById("qCnt").textContent = `${S.idx+1}/${total}`;
+  document.getElementById("qText").textContent = q.text;
+
+  const opts = Array.isArray(q.opts) ? q.opts : JSON.parse(q.opts || "[]");
+
+  document.getElementById("opts").innerHTML = opts.map((o,i)=>`
+    <button class="opt" onclick="pick(${i})">${o}</button>
+  `).join("");
+
+  S.selected = null;
+  S.answered = false;
+}
+
+// ====== PICK ======
 function pick(i) {
   if (S.answered) return;
 
   S.selected = i;
-  document.querySelectorAll(".opt")
-    .forEach((b, idx) => b.classList.toggle("selected", idx === i));
 
-  confBtn.className = "confirm-btn active";
+  document.querySelectorAll(".opt")
+    .forEach((b,idx)=>b.classList.toggle("selected", idx===i));
 }
 
+// ====== CONFIRM ======
 function confirmAns() {
-  if (S.answered || S.selected === null) return;
+  if (S.selected === null || S.answered) return;
 
   const q = S.qs[S.idx];
-  const i = S.selected;
-
   S.answered = true;
-  S.ans[S.idx] = i;
+  S.ans[S.idx] = S.selected;
 
   const btns = document.querySelectorAll(".opt");
 
   btns.forEach(b => b.disabled = true);
 
-  // تحديد الصح والخطأ
-  btns[i].classList.add(i === q.ans ? "correct" : "wrong");
-  o(i).textContent = i === q.ans ? "✓" : "✗";
+  btns[S.selected].classList.add(
+    S.selected === q.ans ? "correct" : "wrong"
+  );
 
-  if (i !== q.ans) {
+  if (S.selected !== q.ans) {
     btns[q.ans].classList.add("correct");
-    o(q.ans).textContent = "✓";
   }
-
-  // شرح
-  if (S.settings.exp && q.exp) {
-    expText.textContent = q.exp;
-    expBox.classList.add("show");
-  }
-
-  confBtn.style.display = "none";
-  nextBtn.className = "next-btn active";
 }
 
+// ====== NEXT ======
 function nextQ() {
   if (!S.answered) return;
 
@@ -82,9 +117,21 @@ function nextQ() {
     S.idx++;
     loadQ();
   } else {
-    finishSession();
+    finish();
   }
 }
 
-// helper
-const o = i => document.getElementById(`o${i}`);
+// ====== FINISH ======
+function finish() {
+  const total = S.qs.length;
+  const correct = S.qs.filter((q,i)=>S.ans[i] === q.ans).length;
+
+  alert(`النتيجة: ${correct} / ${total}`);
+}
+
+// ====== START ======
+loadQuestions();
+</script>
+
+</body>
+</html>
