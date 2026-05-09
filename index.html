@@ -1,137 +1,2782 @@
+
+
 <!DOCTYPE html>
-<html lang="ar">
+
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>مقام - اختبار</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maqam — لكل مجتهد مقام</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Noto+Naskh+Arabic:wght@700;800;900&display=swap" rel="stylesheet">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{skipHtmlTags:["script","noscript","style","textarea"]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
-body { font-family: Arial; direction: rtl; text-align:center; background:#f4f6fb; }
-.container { max-width:600px; margin:auto; padding:20px; }
-button { padding:10px; margin:5px; width:100%; cursor:pointer; }
-.correct { background: #15803d; color:white; }
-.wrong { background: #b91c1c; color:white; }
-.selected { background:#ddd; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--navy:#1a2f5e;--navy-dark:#111f3f;--navy-light:#e8edf8;--navy-lighter:#f0f4fc;
+--orange:#e05c00;--orange-light:#fff0e6;
+--gold:#d4900a;--gold-light:#fdf3e0;
+--green:#15803d;--green-light:#dcfce7;--green-dark:#166534;
+--red:#b91c1c;--red-light:#fee2e2;--red-dark:#991b1b;
+--cyan:#0e7490;--yellow-light:#fefce8;--gray-light:#f3f4f6;
+--bg:#f4f6fb;--white:#fff;--surface:#eaecf5;
+--border:#d0d7ea;--text:#1a2f5e;--text2:#4a5578;--text3:#8492b0;
+--sh:0 1px 3px rgba(26,47,94,.08);--sh2:0 4px 16px rgba(26,47,94,.10);--sh3:0 12px 40px rgba(26,47,94,.15);
+--r:18px;--rs:12px;--rx:8px}
+html{scroll-behavior:smooth}
+body{font-family:"Tajawal",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.page{display:none;min-height:100vh;flex-direction:column}.page.active{display:flex}
+@keyframes fU{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fI{from{opacity:0}to{opacity:1}}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* ── LOADING ── */
+#ls{position:fixed;inset:0;z-index:9999;background:var(–navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:opacity .5s}
+#ls.hide{opacity:0;pointer-events:none}
+.ls-logo{font-family:“Noto Naskh Arabic”,serif;font-size:68px;font-weight:900;color:#fff;line-height:1}
+.ls-en{font-size:10px;letter-spacing:6px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:-4px}
+.ls-spin{width:28px;height:28px;border:2.5px solid rgba(255,255,255,.18);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;right:0;left:0;z-index:200;height:56px;background:var(–white);border-bottom:1px solid var(–border);box-shadow:var(–sh);display:grid;grid-template-columns:48px 1fr 48px;align-items:center;padding:0 10px}
+.nv-menu{width:36px;height:36px;border:1px solid var(–border);border-radius:9px;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+.nv-menu span{display:block;width:14px;height:2px;background:var(–text2);border-radius:2px}
+.nv-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.nv-logo{font-family:“Noto Naskh Arabic”,serif;font-size:18px;font-weight:900;color:var(–navy);line-height:1}
+.nv-logo-en{font-size:6px;letter-spacing:4px;color:var(–text3);text-transform:uppercase}
+.nv-user{display:none;flex-direction:column;align-items:center;line-height:1.3}
+.nv-uname{font-size:11px;font-weight:800;color:var(–navy);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv-uschool{font-size:9px;color:var(–text3);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv-back{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(–border);border-radius:9px;background:transparent;cursor:pointer;font-size:16px;color:var(–text2);justify-self:end}
+.nv-back.show{display:flex}
+
+/* ── DRAWER ── */
+.drw-ov{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.27);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+.drw-ov.open{opacity:1;pointer-events:all}
+.drw{position:fixed;top:0;right:0;width:min(285px,88vw);height:100vh;background:var(–white);box-shadow:var(–sh3);z-index:400;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+.drw.open{transform:translateX(0)}
+.drw-head{padding:14px 16px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between}
+.drw-logo{font-family:“Noto Naskh Arabic”,serif;font-size:16px;font-weight:900;color:var(–navy)}
+.drw-logo small{font-size:7px;display:block;letter-spacing:4px;color:var(–text3);text-transform:uppercase}
+.drw-close{width:28px;height:28px;border:1px solid var(–border);border-radius:7px;background:var(–surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px}
+.drw-user{padding:10px 16px;background:var(–navy)}
+.drw-uname{font-size:13px;font-weight:800;color:white}
+.drw-umeta{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.drw-sec-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:7px 10px;border-bottom:1px solid var(–border);background:var(–surface)}
+.drw-tab{padding:7px;border-radius:7px;border:1.5px solid var(–border);background:white;cursor:pointer;font-family:“Tajawal”,sans-serif;font-size:11px;font-weight:700;color:var(–text2);text-align:center;transition:.2s}
+.drw-tab.active{background:var(–navy);color:white;border-color:var(–navy)}
+.drw-nav{padding:4px 0}
+.drw-item{display:flex;align-items:center;gap:9px;padding:10px 16px;cursor:pointer;border:none;background:transparent;width:100%;text-align:right;font-family:“Tajawal”,sans-serif;font-size:13px;font-weight:500;color:var(–text2);border-right:3px solid transparent;transition:.18s}
+.drw-item:hover{background:var(–surface)}
+.drw-item.active{background:var(–navy-lighter);color:var(–navy);border-right-color:var(–navy);font-weight:700}
+.drw-item.danger{color:var(–red)}.drw-item.danger:hover{background:var(–red-light)}
+.drw-item.wa{color:#16a34a}.drw-item.wa:hover{background:var(–green-light)}
+.drw-ic{font-size:14px;flex-shrink:0;width:18px;text-align:center}
+.drw-foot{padding:8px 16px;border-top:1px solid var(–border);text-align:center;font-size:9px;color:var(–text3);margin-top:auto}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:var(–rs);font-family:“Tajawal”,sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.btn-primary{background:var(–navy);color:white}.btn-primary:hover:not(:disabled){background:var(–navy-dark)}
+.btn-outline{background:white;color:var(–navy);border:2px solid var(–navy)}.btn-outline:hover:not(:disabled){background:var(–navy-lighter)}
+.btn-ghost{background:var(–surface);color:var(–text2);border:1px solid var(–border)}.btn-ghost:hover:not(:disabled){background:var(–border)}
+.btn-green{background:var(–green);color:white}.btn-green:hover:not(:disabled){background:var(–green-dark)}
+.btn-red{background:var(–red);color:white}.btn-red:hover:not(:disabled){background:var(–red-dark)}
+.btn-block{width:100%}.btn-sm{padding:6px 12px;font-size:11px;border-radius:var(–rx)}.btn-lg{padding:12px 28px;font-size:15px;border-radius:var(–r)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── FORMS ── */
+.fg{margin-bottom:11px}.fl{display:block;font-size:11px;font-weight:600;color:var(–text2);margin-bottom:4px}
+.fi{width:100%;padding:10px 12px;background:var(–bg);border:1.5px solid var(–border);border-radius:var(–rs);font-family:“Tajawal”,sans-serif;font-size:13px;color:var(–text);outline:none;transition:.2s}
+.fi:focus{border-color:var(–navy);background:white}.fi::placeholder{color:var(–text3)}
+.fh{font-size:10px;color:var(–text3);margin-top:3px}
+
+/* ── HOME ── */
+.home-body{flex:1;padding-top:56px}
+.hero{background:var(–navy);padding:48px 18px 36px;text-align:center;position:relative;overflow:hidden}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);background-size:24px 24px;pointer-events:none}
+.hero-content{position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:100px;padding:4px 11px;font-size:10px;font-weight:700;color:rgba(255,255,255,.78);margin-bottom:16px;animation:fU .5s ease both}
+.hero-logo{font-family:“Noto Naskh Arabic”,serif;font-size:clamp(68px,15vw,108px);font-weight:900;color:white;line-height:1;animation:fU .5s .05s ease both}
+.hero-logo-en{font-size:9px;letter-spacing:5px;color:rgba(255,255,255,.28);font-weight:600;display:block;margin-top:4px;text-transform:uppercase;animation:fU .5s .1s ease both}
+.hero-tag{font-size:clamp(14px,3vw,20px);font-weight:800;color:var(–gold);margin:14px 0 8px;animation:fU .5s .15s ease both}
+.hero-desc{font-size:13px;color:rgba(255,255,255,.6);max-width:320px;margin:0 auto 24px;line-height:1.9;animation:fU .5s .2s ease both}
+.hero-btns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;animation:fU .5s .25s ease both}
+.hbtn{display:inline-flex;align-items:center;gap:6px;padding:12px 22px;border-radius:var(–rs);font-family:“Tajawal”,sans-serif;font-size:14px;font-weight:800;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(0,0,0,.15);transition:.2s;background:white;color:var(–navy)}
+.hbtn:hover{transform:translateY(-2px)}
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);background:white;border-bottom:1px solid var(–border)}
+.stat-box{padding:16px 8px;text-align:center;border-left:1px solid var(–border)}.stat-box:last-child{border-left:none}
+.stat-num{font-size:clamp(16px,4vw,22px);font-weight:900;color:var(–navy);margin-bottom:2px;line-height:1.1}
+.stat-lbl{font-size:9px;color:var(–text2);font-weight:600;line-height:1.4}
+.sec{padding:44px 16px;max-width:880px;margin:0 auto}
+.sec-eye{font-size:9px;font-weight:700;color:var(–navy);letter-spacing:3px;text-align:center;margin-bottom:4px;opacity:.6;text-transform:uppercase}
+.sec-title{font-size:clamp(15px,3vw,20px);font-weight:800;color:var(–navy);text-align:center;margin-bottom:5px}
+.sec-sub{text-align:center;font-size:12px;color:var(–text2);margin-bottom:22px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:11px}
+.feat-card{border-radius:var(–r);padding:18px 15px;transition:.25s;border:1px solid transparent}
+.feat-card:nth-child(1){background:white;border-color:var(–border)}
+.feat-card:nth-child(2){background:var(–orange-light);border-color:rgba(224,92,0,.12)}
+.feat-card:nth-child(3){background:var(–yellow-light);border-color:rgba(202,138,4,.12)}
+.feat-card:nth-child(4){background:var(–gray-light);border-color:rgba(107,114,128,.12)}
+.feat-card:hover{transform:translateY(-3px);box-shadow:var(–sh2)}
+.feat-ic{width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.feat-title{font-size:13px;font-weight:800;margin-bottom:3px;color:var(–navy)}
+.feat-desc{font-size:11px;color:var(–text2);line-height:1.7}
+.how{background:white;border-top:1px solid var(–border);border-bottom:1px solid var(–border);padding:44px 16px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:16px;max-width:700px;margin:0 auto}
+.step{text-align:center}
+.step-num{width:40px;height:40px;background:var(–navy);color:white;border-radius:50%;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 9px}
+.step-title{font-size:12px;font-weight:800;color:var(–navy);margin-bottom:3px}
+.step-desc{font-size:10px;color:var(–text2);line-height:1.6}
+.cta{background:var(–navy);padding:40px 18px;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:“مقام”;font-family:“Noto Naskh Arabic”,serif;position:absolute;font-size:120px;font-weight:900;color:rgba(255,255,255,.04);left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.cta-title{font-size:clamp(14px,3vw,20px);font-weight:800;color:white;margin-bottom:5px;position:relative;z-index:1}
+.cta-sub{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:16px;position:relative;z-index:1}
+.cta-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:white;color:var(–navy);border-radius:var(–rs);font-family:“Tajawal”,sans-serif;font-size:13px;font-weight:800;cursor:pointer;border:none;transition:.2s;position:relative;z-index:1}
+.cta-btn:hover{transform:translateY(-2px)}
+footer{background:white;border-top:1px solid var(–border);padding:12px 18px;text-align:center;font-size:10px;color:var(–text3);line-height:2}
+footer a{color:var(–text3);text-decoration:none}
+
+/* ── ABOUT ── */
+.about-body{flex:1;padding-top:56px}
+.about-hero{background:var(–navy);padding:44px 18px 36px;text-align:center;position:relative;overflow:hidden}
+.about-hero::before{content:“مقام”;font-family:“Noto Naskh Arabic”,serif;position:absolute;font-size:150px;font-weight:900;color:rgba(255,255,255,.03);left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.about-hero-title{font-size:clamp(17px,4vw,24px);font-weight:800;color:white;margin-bottom:6px;position:relative;z-index:1}
+.about-hero-sub{font-size:12px;color:rgba(255,255,255,.6);position:relative;z-index:1;max-width:360px;margin:0 auto;line-height:1.9}
+.about-sec{max-width:680px;margin:0 auto;padding:32px 18px}
+.about-card{background:white;border:1px solid var(–border);border-radius:var(–r);padding:20px;margin-bottom:12px;box-shadow:var(–sh)}
+.about-card-title{font-size:13px;font-weight:800;color:var(–navy);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.about-card-text{font-size:12px;color:var(–text2);line-height:2}
+.about-goals{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-top:10px}
+.about-goal{background:var(–navy-lighter);border-radius:var(–rs);padding:11px;text-align:center}
+.about-goal-ic{font-size:20px;margin-bottom:4px}
+.about-goal-text{font-size:11px;font-weight:700;color:var(–navy)}
+
+/* ── LOGIN ── */
+.login-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:70px 16px 32px;background:var(–bg)}
+.login-box{width:100%;max-width:370px;background:white;border:1px solid var(–border);border-radius:20px;padding:24px;box-shadow:var(–sh2);animation:fU .4s ease}
+.login-logo{text-align:center;margin-bottom:12px}
+.login-logo-ar{font-family:“Noto Naskh Arabic”,serif;font-size:24px;font-weight:900;color:var(–navy);line-height:1.1}
+.login-logo-en{font-size:7px;letter-spacing:4px;color:var(–text3);text-transform:uppercase}
+.login-tag{text-align:center;font-size:11px;color:var(–text2);margin-bottom:16px}
+.login-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:16px;background:var(–surface);padding:4px;border-radius:var(–rs)}
+.login-tab{padding:8px;border-radius:var(–rx);border:none;background:transparent;font-family:“Tajawal”,sans-serif;font-size:12px;font-weight:700;color:var(–text2);cursor:pointer;transition:.18s}
+.login-tab.active{background:var(–navy);color:white}
+.login-demo{margin-top:10px;padding:8px 10px;background:var(–bg);border:1px dashed var(–border);border-radius:7px;font-size:10px;color:var(–text3);line-height:2}
+.login-demo b{color:var(–text2)}
+
+/* ── STUDENT DASH ── */
+.dash-body{flex:1;padding:64px 13px 30px;max-width:600px;margin:0 auto;width:100%}
+.sec-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px;background:white;padding:4px;border-radius:var(–r);border:1px solid var(–border);box-shadow:var(–sh)}
+.sec-tab{padding:8px;border-radius:var(–rs);border:none;background:transparent;font-family:“Tajawal”,sans-serif;font-size:12px;font-weight:700;color:var(–text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:.18s}
+.sec-tab.active{background:var(–navy);color:white}
+.sec-tab.active.ac-tab{background:var(–cyan)}
+.date-bar{background:white;border:1px solid var(–border);border-radius:var(–r);padding:11px 14px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(–sh)}
+.date-day{font-size:14px;font-weight:800}.date-full{font-size:10px;color:var(–text2);margin-top:1px}
+.wk-range{background:var(–navy-lighter);color:var(–navy);padding:3px 9px;border-radius:100px;font-size:10px;font-weight:700}
+.wk-card{background:var(–navy);border-radius:var(–r);padding:14px;margin-bottom:9px;box-shadow:0 4px 16px rgba(26,47,94,.17);position:relative;overflow:hidden}
+.wk-card::before{content:””;position:absolute;top:-20px;left:-20px;width:80px;height:80px;background:rgba(255,255,255,.04);border-radius:50%}
+.wk-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.wk-title{font-size:11px;font-weight:700;color:white}
+.wk-acts{display:flex;align-items:center;gap:5px}
+.wk-badge{font-size:9px;font-weight:700;background:rgba(255,255,255,.12);color:white;border:1px solid rgba(255,255,255,.16);padding:2px 7px;border-radius:100px}
+.wk-anal{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px}
+.days-row{display:flex;gap:3px;margin-bottom:9px}
+.day-pill{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:7px;border:1.5px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04)}
+.day-pill.done{background:rgba(21,128,61,.3);border-color:rgba(21,128,61,.6)}
+.day-pill.today{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.55)}
+.day-pill.missed{background:rgba(185,28,28,.16);border-color:rgba(185,28,28,.35)}
+.day-pill.locked{opacity:.2}
+.day-name{font-size:8px;font-weight:700;color:rgba(255,255,255,.6)}.day-ic{font-size:11px}
+.wk-prog{display:flex;align-items:center;gap:6px}
+.wk-bar{flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden}
+.wk-bar-fill{height:100%;background:rgba(255,255,255,.6);border-radius:100px;transition:width .5s ease}
+.wk-pct{font-size:9px;color:rgba(255,255,255,.55);font-weight:700;min-width:22px;text-align:left}
+.action-cards{display:flex;flex-direction:column;gap:7px}
+.ac{background:white;border:1.5px solid var(–border);border-radius:var(–r);padding:13px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.2s;box-shadow:var(–sh)}
+.ac:hover:not(.disabled){border-color:var(–navy);box-shadow:var(–sh2);transform:translateX(-2px)}
+.ac.disabled{opacity:.44;cursor:not-allowed}
+.ac-ic{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ic-navy{background:var(–navy-lighter)}.ic-green{background:var(–green-light)}.ic-gold{background:var(–gold-light)}
+.ac-body{flex:1}.ac-title{font-size:12px;font-weight:700;margin-bottom:2px}.ac-desc{font-size:10px;color:var(–text2)}
+.badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;white-space:nowrap}
+.b-navy{background:var(–navy-lighter);color:var(–navy)}.b-green{background:var(–green-light);color:var(–green-dark)}
+.b-amber{background:var(–gold-light);color:#7a4f0a}.b-red{background:var(–red-light);color:var(–red-dark)}
+.ac-arr{color:var(–text3);font-size:12px}
+
+/* ── QUESTIONS ── */
+.q-body{flex:1;padding:64px 13px 30px;max-width:600px;margin:0 auto;width:100%}
+.timer-bar{background:var(–red-light);border:1px solid #fca5a5;border-radius:var(–rs);padding:7px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.timer-lbl{font-size:10px;color:var(–text2);font-weight:600}
+.timer-val{font-size:16px;font-weight:900;color:var(–red);font-variant-numeric:tabular-nums}
+.timer-val.warn{animation:bl 1s ease infinite}
+.q-hdr{margin-bottom:11px}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.q-lbl{font-size:10px;font-weight:700;color:var(–text2)}.q-cnt{font-size:10px;font-weight:700;color:var(–navy)}
+.q-bar{height:4px;background:var(–border);border-radius:100px;overflow:hidden;margin-bottom:5px}
+.q-bar-fill{height:100%;background:var(–green);border-radius:100px;transition:width .3s}
+.q-sk-row{display:flex;align-items:center;justify-content:space-between}
+.q-skill{font-size:9px;color:var(–navy);font-weight:600;background:var(–navy-lighter);padding:2px 8px;border-radius:100px}
+.q-rpt-btn{font-size:9px;color:var(–text3);background:none;border:none;cursor:pointer;font-family:“Tajawal”,sans-serif;display:flex;align-items:center;gap:2px;padding:2px 4px;border-radius:5px}
+.q-rpt-btn:hover{color:var(–red);background:var(–red-light)}
+.rpt-dd{position:absolute;top:100%;left:0;background:white;border:1px solid var(–border);border-radius:var(–rs);box-shadow:var(–sh3);z-index:50;min-width:195px;overflow:hidden;display:none;animation:fU .2s ease;margin-top:4px}
+.rpt-dd.open{display:block}
+.rpt-dd-title{padding:6px 10px;font-size:9px;font-weight:700;color:var(–text3);border-bottom:1px solid var(–border);background:var(–bg)}
+.rpt-opt{padding:7px 10px;font-size:11px;color:var(–text);cursor:pointer;display:flex;align-items:center;gap:6px;transition:.14s}
+.rpt-opt:hover{background:var(–red-light);color:var(–red)}
+.rpt-other{padding:7px 10px;border-top:1px solid var(–border);background:var(–bg)}
+.rpt-other-inp{width:100%;padding:5px 8px;background:white;border:1.5px solid var(–border);border-radius:7px;font-family:“Tajawal”,sans-serif;font-size:11px;color:var(–text);outline:none;margin-bottom:5px}
+.rpt-other-inp:focus{border-color:var(–navy)}
+.rpt-other-btn{width:100%;padding:5px;background:var(–navy);color:white;border:none;border-radius:7px;font-family:“Tajawal”,sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+.q-card{background:white;border:1px solid var(–border);border-radius:var(–r);padding:18px 15px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:var(–sh)}
+.q-text{font-size:15px;font-weight:600;line-height:1.9;color:var(–text);text-align:center;width:100%}
+.q-svg-wrap{width:100%;margin-top:12px;display:flex;justify-content:center}.q-svg-wrap svg{max-width:100%;height:auto}
+.opts{display:flex;flex-direction:column;gap:6px;margin-bottom:9px}
+.opt{display:flex;align-items:center;gap:9px;padding:10px 12px;background:white;border:1.5px solid var(–border);border-radius:var(–rs);cursor:pointer;width:100%;font-family:“Tajawal”,sans-serif;color:var(–text);transition:.16s;text-align:right}
+.opt:hover:not(:disabled){border-color:var(–navy);background:var(–navy-lighter)}
+.opt.selected{border-color:var(–navy);background:var(–navy-lighter)}
+.opt.correct{border-color:var(–green);background:var(–green-light)}
+.opt.wrong{border-color:var(–red);background:var(–red-light)}
+.opt:disabled{cursor:default}
+.opt-letter{width:23px;height:23px;border-radius:6px;background:var(–surface);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;color:var(–text2);transition:.16s}
+.opt.selected .opt-letter{background:var(–navy);color:white}
+.opt.correct .opt-letter{background:var(–green);color:white}
+.opt.wrong .opt-letter{background:var(–red);color:white}
+.opt-text{font-size:13px;font-weight:500;flex:1}.opt-ric{font-size:13px;flex-shrink:0}
+.exp-box{background:#fffbeb;border:1px solid #fde68a;border-right:4px solid var(–gold);border-radius:var(–rs);padding:10px 12px;margin-bottom:9px;display:none}
+.exp-box.show{display:block;animation:fU .25s ease}
+.exp-lbl{font-size:9px;font-weight:700;color:#7a4f0a;margin-bottom:2px}
+.exp-text{font-size:11px;color:#6b3f0a;line-height:1.9;white-space:pre-wrap}
+.q-foot{display:flex;gap:6px;flex-direction:column}
+.confirm-btn{width:100%;padding:11px;border-radius:var(–rs);font-family:“Tajawal”,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:.16s}
+.confirm-btn.inactive{background:var(–border);color:var(–text3);cursor:not-allowed}
+.confirm-btn.active{background:var(–navy);color:white}
+.next-btn{width:100%;padding:10px;border-radius:var(–rs);font-family:“Tajawal”,sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.16s}
+.next-btn.inactive{background:var(–border);color:var(–text3);cursor:not-allowed}
+.next-btn.active{background:var(–green);color:white}
+
+/* ── RESULTS ── */
+.res-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 18px 30px;max-width:420px;margin:0 auto;width:100%;text-align:center}
+.score-ring{position:relative;width:118px;height:118px;margin-bottom:14px}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-pct{font-size:24px;font-weight:900}.score-lbl{font-size:9px;color:var(–text2)}
+.res-title{font-size:19px;font-weight:800;margin-bottom:3px}
+.res-sub{font-size:12px;color:var(–text2);margin-bottom:12px}
+.res-level{background:var(–navy-lighter);border:1px solid var(–navy-light);border-radius:var(–rs);padding:11px 14px;margin-bottom:14px;width:100%;text-align:right}
+.res-level-title{font-size:10px;font-weight:700;color:var(–navy);margin-bottom:3px}
+.res-level-text{font-size:12px;color:var(–text2);line-height:1.8}
+.res-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;margin-bottom:11px}
+.res-stat{background:white;border:1px solid var(–border);border-radius:var(–rs);padding:10px 6px;text-align:center}
+.res-val{font-size:19px;font-weight:900;margin-bottom:1px}.res-lbl{font-size:9px;color:var(–text2)}
+.res-acts{display:flex;gap:6px;width:100%;margin-bottom:8px}
+.res-show-qs{width:100%;padding:8px;background:var(–surface);border:1px solid var(–border);border-radius:var(–rs);font-family:“Tajawal”,sans-serif;font-size:11px;font-weight:700;color:var(–text2);cursor:pointer;transition:.16s}
+.res-show-qs:hover{background:var(–border)}
+.res-qs-panel{display:none;width:100%;margin-top:8px;background:white;border:1px solid var(–border);border-radius:var(–r);overflow:hidden;max-height:320px;overflow-y:auto}
+.res-qs-panel.open{display:block;animation:fU .22s ease}
+.res-q-item{padding:9px 13px;border-bottom:1px solid var(–border);display:flex;align-items:flex-start;gap:7px;font-size:11px}
+.res-q-item:last-child{border-bottom:none}
+.res-q-ic{font-size:12px;flex-shrink:0;margin-top:1px}
+.res-q-info{flex:1}
+.res-q-text{color:var(–text2);line-height:1.5;margin-bottom:2px}
+.res-q-skill{font-size:9px;font-weight:700;color:var(–text3)}
+
+/* ── ANALYSIS ── */
+.an-body{flex:1;padding:64px 13px 30px;max-width:600px;margin:0 auto;width:100%}
+.ov-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px;margin-bottom:14px}
+.ov-card{background:white;border:1px solid var(–border);border-radius:var(–r);padding:12px;text-align:center}
+.ov-val{font-size:21px;font-weight:900;color:var(–navy);margin-bottom:1px}.ov-lbl{font-size:9px;color:var(–text2)}
+.chart-card{background:white;border:1px solid var(–border);border-radius:var(–r);padding:14px;margin-bottom:12px}
+.chart-title{font-size:11px;font-weight:700;margin-bottom:10px;color:var(–navy)}
+.bar-chart{display:flex;flex-direction:column;gap:6px}
+.bar-row{display:flex;align-items:center;gap:7px}
+.bar-lbl{font-size:10px;font-weight:600;color:var(–text2);width:65px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:7px;background:var(–border);border-radius:100px;overflow:hidden}
+.bar-fill{height:100%;border-radius:100px;transition:width .5s ease}
+.bar-pct{font-size:9px;font-weight:700;color:var(–text2);width:26px;text-align:left}
+.fill-great{background:var(–green)}.fill-good{background:var(–navy)}.fill-avg{background:var(–gold)}.fill-weak{background:var(–red)}
+.subj-cards{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.subj-card{background:white;border:1px solid var(–border);border-radius:var(–r);overflow:hidden}
+.subj-head{display:flex;align-items:center;gap:9px;padding:12px 14px;cursor:pointer;transition:.16s}
+.subj-head:hover{background:var(–bg)}
+.subj-ic{font-size:17px;width:34px;height:34px;border-radius:8px;background:var(–navy-lighter);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.subj-info{flex:1}.subj-name{font-size:12px;font-weight:700;color:var(–navy);margin-bottom:1px}.subj-meta{font-size:9px;color:var(–text2)}
+.subj-lvl{font-size:8px;font-weight:700;padding:2px 6px;border-radius:100px}
+.lvl-great{background:var(–green-light);color:var(–green-dark)}.lvl-good{background:var(–navy-lighter);color:var(–navy)}
+.lvl-avg{background:var(–gold-light);color:#7a4f0a}.lvl-weak{background:var(–red-light);color:var(–red-dark)}
+.subj-chev{font-size:10px;color:var(–text3);transition:.2s}.subj-card.open .subj-chev{transform:rotate(90deg)}
+.subj-skills{display:none;border-top:1px solid var(–border);padding:10px 14px;background:var(–bg)}
+.subj-card.open .subj-skills{display:block;animation:fU .18s ease}
+.sk-row{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(–border)}.sk-row:last-child{border-bottom:none}
+.sk-name{flex:1;font-size:11px;font-weight:600}.sk-stats{font-size:9px;color:var(–text3);margin-top:1px}
+.sk-bar{width:50px;height:4px;background:var(–border);border-radius:100px;overflow:hidden}
+.sk-bar-f{height:100%;border-radius:100px;transition:width .4s}
+.sk-pct{font-size:9px;font-weight:700;color:var(–text2);width:22px;text-align:left}
+.sk-train{padding:3px 8px;font-size:9px;font-weight:700;background:var(–navy-lighter);color:var(–navy);border:1px solid var(–navy-light);border-radius:5px;cursor:pointer;font-family:“Tajawal”,sans-serif}
+.sk-train:hover{background:var(–navy);color:white}
+
+/* ── REPORTS ── */
+.rp-body{flex:1;padding:64px 13px 30px;max-width:600px;margin:0 auto;width:100%}
+.pg-title{font-size:16px;font-weight:800;margin-bottom:12px}
+.rp-sec{background:white;border:1px solid var(–border);border-radius:var(–r);padding:14px;margin-bottom:10px}
+.rp-sec-title{font-size:11px;font-weight:700;color:var(–navy);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(–border)}
+.wk-bars{display:flex;align-items:flex-end;gap:5px;height:64px;margin-bottom:5px}
+.wk-bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.wk-bar-f{width:100%;border-radius:3px 3px 0 0;min-height:2px}
+.wk-bar-lb{font-size:7px;color:var(–text3);font-weight:600}.wk-bar-v{font-size:8px;font-weight:700;color:var(–navy)}
+.streak-row{display:flex;gap:3px;flex-wrap:wrap}
+.streak-dot{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px}
+.sd-done{background:var(–green);color:white}.sd-miss{background:var(–border);color:var(–text3)}.sd-today{background:var(–navy);color:white}
+.rp-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.rp-stat{border-radius:8px;padding:10px;text-align:center}
+.rp-stat:nth-child(1){background:var(–navy-lighter)}
+.rp-stat:nth-child(2){background:var(–green-light)}
+.rp-stat:nth-child(3){background:var(–gold-light)}
+.rp-stat:nth-child(4){background:var(–orange-light)}
+.rp-stat-val{font-size:17px;font-weight:900;color:var(–navy)}.rp-stat-lbl{font-size:9px;color:var(–text2);margin-top:1px}
+.weak-list{display:flex;flex-direction:column;gap:5px}
+.weak-row{display:flex;align-items:center;gap:7px}
+.weak-name{flex:1;font-size:11px;font-weight:600}.weak-pct{font-size:10px;font-weight:700;color:var(–red)}
+
+/* ── SETTINGS ── */
+.st-body{flex:1;padding:64px 13px 30px;max-width:600px;margin:0 auto;width:100%}
+.st-sec{background:white;border:1px solid var(–border);border-radius:var(–r);margin-bottom:10px;overflow:hidden}
+.st-sec-title{font-size:9px;font-weight:700;color:var(–text3);padding:8px 14px;border-bottom:1px solid var(–border);background:var(–bg);letter-spacing:1px;text-transform:uppercase}
+.st-row{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(–border)}.st-row:last-child{border-bottom:none}
+.st-row-ic{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.st-row-info{flex:1}.st-row-lbl{font-size:12px;font-weight:600}.st-row-sub{font-size:9px;color:var(–text3);margin-top:1px}
+.st-action{font-size:10px;font-weight:700;color:var(–navy);background:var(–navy-lighter);padding:4px 9px;border-radius:5px;cursor:pointer;border:none;font-family:“Tajawal”,sans-serif}
+.toggle{width:35px;height:19px;background:var(–border);border-radius:100px;cursor:pointer;position:relative;flex-shrink:0;border:none;transition:.2s}
+.toggle.on{background:var(–navy)}
+.toggle::after{content:””;position:absolute;top:2px;right:2px;width:15px;height:15px;background:white;border-radius:50%;transition:.2s}
+.toggle.on::after{right:auto;left:2px}
+/* modal تغيير كلمة المرور */
+.pw-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.28);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:18px}
+.pw-modal.open{display:flex}
+.pw-box{background:white;border-radius:18px;padding:22px;max-width:330px;width:100%;box-shadow:var(–sh3);animation:fU .25s ease}
+.pw-title{font-size:15px;font-weight:800;margin-bottom:14px}
+
+/* ── SCHOOL / TEACHER / ADMIN ── */
+.sc-body{flex:1;padding:64px 13px 30px;max-width:880px;margin:0 auto;width:100%}
+.sc-welcome{border-radius:var(–r);padding:17px 18px;margin-bottom:12px;color:white;position:relative;overflow:hidden;background:linear-gradient(135deg,var(–navy),#1e3a8a)}
+.sc-welcome::after{content:“مقام”;font-family:“Noto Naskh Arabic”,serif;position:absolute;left:-6px;top:50%;transform:translateY(-50%);font-size:52px;font-weight:900;color:rgba(255,255,255,.04);pointer-events:none}
+.sw-title{font-size:16px;font-weight:800;margin-bottom:1px}.sw-sub{font-size:11px;color:rgba(255,255,255,.55)}
+.sc-tabs{display:flex;gap:5px;margin-bottom:13px;overflow-x:auto;padding-bottom:2px}
+.sc-tab{padding:6px 13px;border-radius:var(–rs);border:1.5px solid var(–border);background:white;cursor:pointer;font-family:“Tajawal”,sans-serif;font-size:12px;font-weight:700;color:var(–text2);white-space:nowrap;flex-shrink:0;transition:.18s}
+.sc-tab.active{background:var(–navy);color:white;border-color:var(–navy)}
+.sc-tab-content{display:none}.sc-tab-content.active{display:block;animation:fI .18s ease}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px;margin-bottom:13px}
+.stat-c{background:white;border:1px solid var(–border);border-radius:var(–r);padding:14px 11px;border-top:3px solid var(–navy)}
+.stat-c:nth-child(2){border-top-color:var(–orange)}
+.stat-c:nth-child(3){border-top-color:var(–gold)}
+.stat-c:nth-child(4){border-top-color:var(–green)}
+.stat-v{font-size:22px;font-weight:900;margin-bottom:2px;color:var(–navy)}.stat-l{font-size:11px;color:var(–text2)}
+.tbl-card{background:white;border:1px solid var(–border);border-radius:var(–r);overflow:hidden;margin-bottom:12px}
+.tbl-head-row{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(–border)}
+.tbl-head-title{font-size:13px;font-weight:700}
+.tbl-head-actions{display:flex;align-items:center;gap:7px}
+.tbl-add-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;background:var(–navy);color:white;border:none;border-radius:var(–rx);font-family:“Tajawal”,sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+.tbl-add-btn:hover{background:var(–navy-dark)}
+.tbl-th{display:flex;padding:7px 15px;background:var(–surface);border-bottom:1px solid var(–border);font-size:10px;font-weight:700;color:var(–text3)}
+.tbl-tr{display:flex;align-items:center;padding:10px 15px;border-bottom:1px solid var(–border);font-size:12px;transition:.13s}
+.tbl-tr:last-child{border-bottom:none}.tbl-tr:hover{background:var(–bg)}
+.c-name{flex:2;font-weight:600}.c-id{flex:1;color:var(–text2)}.c-days{flex:1;text-align:center}
+.c-score{flex:1;text-align:center}.c-status{flex:1;text-align:center}.c-role{flex:2;text-align:right}
+.c-act{flex:1;text-align:center}
+.pill{display:inline-block;padding:2px 8px;border-radius:100px;font-size:9px;font-weight:700}
+.pill-green{background:var(–green-light);color:var(–green-dark)}.pill-amber{background:var(–gold-light);color:#7a4f0a}
+.pill-red{background:var(–red-light);color:var(–red-dark)}.pill-navy{background:var(–navy-lighter);color:var(–navy)}
+.add-form{background:white;border:1px solid var(–border);border-radius:var(–r);padding:16px;margin-bottom:11px}
+.add-form-title{font-size:13px;font-weight:700;margin-bottom:11px;color:var(–navy)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.form-row{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.chip{display:inline-flex;align-items:center;gap:3px;padding:4px 9px;border-radius:6px;border:1.5px solid var(–border);font-size:11px;font-weight:600;color:var(–text2);cursor:pointer;user-select:none;transition:.16s}
+.chip.checked{border-color:var(–navy);background:var(–navy-lighter);color:var(–navy)}
+.upload-zone{border:2px dashed var(–border);border-radius:var(–rs);padding:20px 14px;text-align:center;cursor:pointer;margin-bottom:8px}
+.upload-zone:hover{border-color:var(–navy);background:var(–navy-lighter)}
+.del-btn{padding:3px 8px;font-size:9px;font-weight:700;background:var(–red-light);color:var(–red-dark);border:1px solid #fca5a5;border-radius:5px;cursor:pointer;font-family:“Tajawal”,sans-serif}
+.del-btn:hover{background:var(–red);color:white}
+.edit-btn{padding:3px 8px;font-size:9px;font-weight:700;background:var(–navy-lighter);color:var(–navy);border:1px solid var(–navy-light);border-radius:5px;cursor:pointer;font-family:“Tajawal”,sans-serif}
+.edit-btn:hover{background:var(–navy);color:white}
+
+/* ── ADMIN ── */
+.ad-welcome{border-radius:var(–r);padding:17px 18px;margin-bottom:12px;color:white;background:linear-gradient(135deg,#111f3f,#1a2f5e);position:relative;overflow:hidden}
+.ad-welcome::after{content:“مقام”;font-family:“Noto Naskh Arabic”,serif;position:absolute;left:-6px;top:50%;transform:translateY(-50%);font-size:52px;font-weight:900;color:rgba(255,255,255,.04);pointer-events:none}
+.ad-title{font-size:16px;font-weight:800;margin-bottom:1px}.ad-sub{font-size:11px;color:rgba(255,255,255,.5)}
+.admin-stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px;margin-bottom:13px}
+.admin-stat-c{background:white;border:1px solid var(–border);border-radius:var(–r);padding:14px 11px;border-right:4px solid var(–navy)}
+.admin-stat-c:nth-child(2){border-right-color:var(–orange)}
+.admin-stat-c:nth-child(3){border-right-color:var(–red)}
+.admin-stat-c:nth-child(4){border-right-color:var(–green)}
+.admin-stat-v{font-size:22px;font-weight:900;color:var(–navy);margin-bottom:2px}.admin-stat-l{font-size:11px;color:var(–text2)}
+/* بنك الأسئلة - لوحة المدير */
+.q-bank-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.q-filter-btn{padding:5px 11px;border-radius:100px;border:1.5px solid var(–border);background:white;font-family:“Tajawal”,sans-serif;font-size:11px;font-weight:600;color:var(–text2);cursor:pointer;transition:.16s}
+.q-filter-btn.active{background:var(–navy);color:white;border-color:var(–navy)}
+.q-bank-item{background:white;border:1px solid var(–border);border-radius:var(–rs);padding:12px 14px;margin-bottom:8px}
+.q-bank-item-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.q-bank-item-text{font-size:12px;font-weight:600;color:var(–text);flex:1;line-height:1.6}
+.q-bank-item-actions{display:flex;gap:5px;flex-shrink:0}
+.q-bank-item-meta{font-size:10px;color:var(–text3)}
+.q-bank-item.flagged{border-color:var(–red);background:var(–red-light)}
+
+/* ── MODAL / TOAST ── */
+.modal-ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.28);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:18px}
+.modal-ov.open{display:flex}
+.modal{background:white;border-radius:18px;padding:24px;max-width:340px;width:100%;box-shadow:var(–sh3);animation:fU .25s ease;text-align:center}
+.modal-ic{font-size:36px;margin-bottom:8px}.modal-title{font-size:16px;font-weight:800;margin-bottom:3px}
+.modal-sub{font-size:12px;color:var(–text2);margin-bottom:16px;line-height:1.7}.modal-btns{display:flex;gap:7px}
+.toast-wrap{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:5px;align-items:center}
+.toast{padding:8px 16px;border-radius:var(–rs);font-size:12px;font-weight:600;animation:fU .25s ease;white-space:nowrap;box-shadow:var(–sh2)}
+.t-ok{background:var(–green-light);border:1px solid #86efac;color:var(–green-dark)}
+.t-err{background:var(–red-light);border:1px solid #fca5a5;color:var(–red-dark)}
+.db-badge{position:fixed;bottom:12px;right:12px;z-index:100;font-size:9px;font-weight:700;padding:4px 9px;border-radius:100px;border:1px solid var(–border);background:white;color:var(–text3);display:flex;align-items:center;gap:4px}
+.db-dot{width:5px;height:5px;border-radius:50%;background:#ccc}
+.db-dot.ok{background:var(–green)}.db-dot.err{background:var(–red)}.db-dot.loading{background:var(–gold);animation:bl 1s ease infinite}
+.spinner{display:inline-block;width:20px;height:20px;border:2.5px solid var(–border);border-top-color:var(–navy);border-radius:50%;animation:sp .7s linear infinite}
+.c-green{color:var(–green)}.c-red{color:var(–red)}.c-navy{color:var(–navy)}
+.pg-empty{padding:32px;text-align:center;color:var(–text3);font-size:12px}
+
+@media(max-width:480px){
+.stats-strip{grid-template-columns:repeat(2,1fr)}
+.stats-strip .stat-box:nth-child(2){border-left:none}
+.stats-strip .stat-box:nth-child(3){border-top:1px solid var(–border)}
+.stats-strip .stat-box:nth-child(4){border-top:1px solid var(–border);border-left:1px solid var(–border)}
+.q-text{font-size:14px}.opt-text{font-size:12px}}
 </style>
-</head>
 
-<body>
+<!-- ════════════════════════════════════════
+     MAQAM — الجزء الثاني: HTML
+     يُوضع بعد </style> وقبل <script>
+════════════════════════════════════════ -->
 
-<div class="container">
-  <h2>📚 اختبار</h2>
-  <div id="qCnt">1/10</div>
-  <h3 id="qText">...</h3>
+<!-- LOADING -->
 
-  <div id="opts"></div>
+<div id="ls"><div class="ls-logo">مقام</div><div class="ls-en">MAQAM</div><div class="ls-spin"></div></div>
 
-  <br>
-  <button onclick="confirmAns()">تأكيد</button>
-  <button onclick="nextQ()">التالي</button>
+<!-- DB BADGE -->
+
+<div class="db-badge"><div class="db-dot loading" id="dbDot"></div><span id="dbLbl">جاري الاتصال</span></div>
+
+<!-- ══ NAV ══ -->
+
+<nav>
+  <button class="nv-menu" onclick="openDrw()"><span></span><span></span><span></span></button>
+  <div class="nv-center">
+    <div id="nvLogo">
+      <div class="nv-logo">مقام</div>
+      <span class="nv-logo-en">MAQAM</span>
+    </div>
+    <div class="nv-user" id="nvUser">
+      <div class="nv-uname" id="nvUN"></div>
+      <div class="nv-uschool" id="nvUS"></div>
+    </div>
+  </div>
+  <button class="nv-back" id="nvBack" onclick="handleBack()">←</button>
+</nav>
+
+<!-- ══ DRAWER ══ -->
+
+<div class="drw-ov" id="drwOv" onclick="closeDrw()"></div>
+<div class="drw" id="drw">
+  <div class="drw-head">
+    <div class="drw-logo">مقام<small>MAQAM</small></div>
+    <button class="drw-close" onclick="closeDrw()">✕</button>
+  </div>
+  <div class="drw-user" id="drwUser" style="display:none">
+    <div class="drw-uname" id="drwN"></div>
+    <div class="drw-umeta" id="drwM"></div>
+  </div>
+  <div class="drw-sec-tabs" id="drwST" style="display:none">
+    <button class="drw-tab active" id="dTabAb" onclick="switchSec('abilities');closeDrw()">📚 القدرات</button>
+    <button class="drw-tab" id="dTabAc" onclick="switchSec('academic');closeDrw()">📖 التحصيلي</button>
+  </div>
+  <!-- قائمة الزائر -->
+  <div class="drw-nav" id="gMenu">
+    <button class="drw-item active" onclick="goHome();closeDrw()"><span class="drw-ic">🏠</span>الرئيسية</button>
+    <button class="drw-item" onclick="goAbout();closeDrw()"><span class="drw-ic">ℹ️</span>من نحن</button>
+    <button class="drw-item" onclick="goLogin();closeDrw()"><span class="drw-ic">🎓</span>تسجيل الدخول</button>
+  </div>
+  <!-- قائمة الطالب -->
+  <div class="drw-nav" id="stMenu" style="display:none">
+    <button class="drw-item" onclick="loadDash();closeDrw()"><span class="drw-ic">🏠</span>الرئيسية</button>
+    <button class="drw-item" onclick="goAnalysis();closeDrw()"><span class="drw-ic">📊</span>تحليل مستواي</button>
+    <button class="drw-item" onclick="goReports();closeDrw()"><span class="drw-ic">📈</span>التقارير</button>
+    <button class="drw-item" onclick="goSettings();closeDrw()"><span class="drw-ic">⚙️</span>الإعدادات</button>
+    <button class="drw-item danger" onclick="logout()"><span class="drw-ic">🚪</span>تسجيل الخروج</button>
+  </div>
+  <!-- قائمة المعلم -->
+  <div class="drw-nav" id="tcMenu" style="display:none">
+    <button class="drw-item" onclick="loadTcDash();closeDrw()"><span class="drw-ic">🏠</span>الرئيسية</button>
+    <button class="drw-item danger" onclick="logout()"><span class="drw-ic">🚪</span>تسجيل الخروج</button>
+  </div>
+  <!-- قائمة المدرسة -->
+  <div class="drw-nav" id="scMenu" style="display:none">
+    <button class="drw-item" onclick="loadSchDash();closeDrw()"><span class="drw-ic">🏫</span>لوحة التحكم</button>
+    <button class="drw-item danger" onclick="logout()"><span class="drw-ic">🚪</span>تسجيل الخروج</button>
+  </div>
+  <!-- قائمة المدير -->
+  <div class="drw-nav" id="adMenu" style="display:none">
+    <button class="drw-item" onclick="loadAdDash();closeDrw()"><span class="drw-ic">⚙️</span>لوحة المدير</button>
+    <button class="drw-item danger" onclick="logout()"><span class="drw-ic">🚪</span>تسجيل الخروج</button>
+  </div>
+  <div class="drw-nav">
+    <button class="drw-item wa" onclick="window.open('https://wa.me/966541156989','_blank');closeDrw()">
+      <span class="drw-ic">💬</span>تواصل معنا على واتساب
+    </button>
+  </div>
+  <div class="drw-foot">Maqam © 2026 — لكل مجتهد مقام</div>
 </div>
 
-<script>
-// ====== SUPABASE ======
-const SB_URL = "https://YOUR_URL.supabase.co";
-const SB_KEY = "YOUR_KEY";
+<!-- ══ HOME ══ -->
 
-async function sb(query) {
-  const res = await fetch(`${SB_URL}/rest/v1/questions?select=*${query}`, {
-    headers: {
-      "apikey": SB_KEY,
-      "Authorization": `Bearer ${SB_KEY}`
-    }
-  });
-  return await res.json();
+<div id="homePage" class="page active">
+  <div class="home-body">
+    <div class="hero">
+      <div class="hero-dots"></div>
+      <div class="hero-content">
+        <div class="hero-badge">🎯 منصة تدريب اختبارات قياس</div>
+        <div class="hero-logo">مقام</div>
+        <span class="hero-logo-en">MAQAM PLATFORM</span>
+        <div class="hero-tag">لكل مجتهد مقام</div>
+        <p class="hero-desc">منصة ذكية لتدريب طلاب المرحلة الثانوية على اختبارات القدرات والتحصيلي</p>
+        <div class="hero-btns">
+          <button class="hbtn" onclick="goLogin()">🎓 ابدأ التدريب</button>
+          <button class="hbtn" onclick="showTrial()">✨ جرّب مجاناً</button>
+        </div>
+      </div>
+    </div>
+    <div class="stats-strip">
+      <div class="stat-box"><div class="stat-num" id="homeQCount">+2000</div><div class="stat-lbl">سؤال في<br>البنك</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-lbl">تدريبات<br>أسبوعية</div></div>
+      <div class="stat-box"><div class="stat-num" style="font-size:12px;padding-top:3px">قدرات<br>+ تحصيلي</div><div class="stat-lbl">اختباران معاً</div></div>
+      <div class="stat-box"><div class="stat-num">📊</div><div class="stat-lbl">تحليل ذكي<br>لمستواك</div></div>
+    </div>
+    <div class="sec">
+      <div class="sec-eye">لماذا مقام</div>
+      <div class="sec-title">منصة تدريب ذكية ومنظمة</div>
+      <p class="sec-sub">كل ما تحتاجه للنجاح في اختبارات قياس</p>
+      <div class="feat-grid">
+        <div class="feat-card"><div class="feat-ic">📅</div><div class="feat-title">تدريب يومي منظم</div><p class="feat-desc">10 أسئلة كل يوم من الأحد إلى الخميس بالترتيب</p></div>
+        <div class="feat-card"><div class="feat-ic">✅</div><div class="feat-title">اختبار أسبوعي</div><p class="feat-desc">اختبار شامل كل جمعة بعد إكمال 5 تدريبات</p></div>
+        <div class="feat-card"><div class="feat-ic">📈</div><div class="feat-title">تحليل مستواك</div><p class="feat-desc">تقارير دقيقة بنقاط القوة والضعف مع تدريب مخصص</p></div>
+        <div class="feat-card"><div class="feat-ic">📚</div><div class="feat-title">قدرات وتحصيلي</div><p class="feat-desc">تغطية شاملة لاختباري القدرات والتحصيلي معاً</p></div>
+      </div>
+    </div>
+    <div class="how">
+      <div style="max-width:880px;margin:0 auto;padding:0 16px">
+        <div class="sec-eye">كيف يعمل</div>
+        <div class="sec-title" style="margin-bottom:22px">أربع خطوات للنجاح</div>
+        <div class="steps">
+          <div class="step"><div class="step-num">١</div><div class="step-title">سجّل دخولك</div><div class="step-desc">ادخل برقمك وكلمة مرور المدرسة</div></div>
+          <div class="step"><div class="step-num">٢</div><div class="step-title">تدرّب يومياً</div><div class="step-desc">10 أسئلة بالترتيب من الأحد للخميس</div></div>
+          <div class="step"><div class="step-num">٣</div><div class="step-title">الاختبار الجمعة</div><div class="step-desc">أكمل 5 تدريبات وافتح الاختبار</div></div>
+          <div class="step"><div class="step-num">٤</div><div class="step-title">تحليل مستواك</div><div class="step-desc">اعرف نقاط قوتك وتدرّب عليها</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cta">
+      <div class="cta-title">جاهز تبدأ رحلتك؟</div>
+      <p class="cta-sub">جرّب مقام مجاناً لأسبوع كامل بدون تسجيل</p>
+      <button class="cta-btn" onclick="showTrial()">🚀 ابدأ الأسبوع التجريبي</button>
+    </div>
+    <footer>
+      Maqam © 2026 — منصة تدريب اختبارات القدرات والتحصيلي<br>
+      تصميم وتطوير: <strong>محمد الخيري</strong> | <a href="https://wa.me/966541156989">تواصل معنا</a>
+      | <a href="#" onclick="goAbout()">من نحن</a>
+    </footer>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+
+<div id="aboutPage" class="page">
+  <div class="about-body">
+    <div class="about-hero">
+      <div class="about-hero-title">من نحن</div>
+      <p class="about-hero-sub">منصة مقام — رفيقك في رحلة التحضير لاختبارات قياس</p>
+    </div>
+    <div class="about-sec">
+      <div class="about-card">
+        <div class="about-card-title">🎯 ما هي مقام؟</div>
+        <p class="about-card-text">مقام منصة تعليمية ذكية مصممة خصيصاً لمساعدة طلاب المرحلة الثانوية في المملكة العربية السعودية على التحضير لاختبارات قياس — القدرات العامة والتحصيل الدراسي. نؤمن بأن كل طالب مجتهد يستحق أداة منظمة وفعّالة تساعده على تحقيق أعلى النتائج.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-card-title">🚀 أهدافنا</div>
+        <div class="about-goals">
+          <div class="about-goal"><div class="about-goal-ic">📅</div><div class="about-goal-text">تدريب يومي منظم</div></div>
+          <div class="about-goal"><div class="about-goal-ic">🧠</div><div class="about-goal-text">تحليل ذكي للمستوى</div></div>
+          <div class="about-goal"><div class="about-goal-ic">🏫</div><div class="about-goal-text">دعم المدارس</div></div>
+          <div class="about-goal"><div class="about-goal-ic">📊</div><div class="about-goal-text">تقارير مفصّلة</div></div>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-title">📚 محتوى المنصة</div>
+        <p class="about-card-text">يغطي بنك الأسئلة أكثر من 2000 سؤال موزعة على: القدرات الكمية واللفظية، والتحصيل الدراسي في مواد الرياضيات والفيزياء والكيمياء والأحياء. جميع الأسئلة مصنّفة حسب المهارة ومستوى الصعوبة.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-card-title">📞 تواصل معنا</div>
+        <p class="about-card-text">للاستفسارات والدعم الفني تواصل معنا عبر واتساب على الرقم 0541156989، أو أرسل بلاغاً عن أي خطأ في الأسئلة مباشرة من داخل التطبيق.</p>
+      </div>
+      <button class="btn btn-ghost btn-block" onclick="goHome()">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+
+<div id="loginPage" class="page">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="login-logo-ar">مقام</div>
+        <div class="login-logo-en">MAQAM</div>
+      </div>
+      <div class="login-tabs">
+        <button class="login-tab active" id="ltStudent" onclick="switchLoginTab('student')">🎓 طالب</button>
+        <button class="login-tab" id="ltSchool" onclick="switchLoginTab('school')">🏫 مدرسة</button>
+      </div>
+      <!-- طالب -->
+      <div id="loginStudent">
+        <p class="login-tag">أهلاً بك، سجّل دخولك للبدء</p>
+        <div class="fg"><label class="fl">رقم الطالب</label><input class="fi" id="sId" type="text" placeholder="مثال: 1001" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="sPw" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"><div class="fh">كلمة المرور الافتراضية: رقمك + 123</div></div>
+        <button class="btn btn-primary btn-block btn-lg" onclick="doLogin()" style="margin-bottom:7px">دخول</button>
+        <button class="btn btn-ghost btn-block" onclick="goHome()">← العودة</button>
+        <div class="login-demo"><b>🔐 تجريبي:</b> طالب: <b>1001</b> / <b>1001123</b></div>
+      </div>
+      <!-- مدرسة/معلم -->
+      <div id="loginSchool" style="display:none">
+        <p class="login-tag">لوحة تحكم المدرسة والمعلمين</p>
+        <div class="fg"><label class="fl">رمز المدرسة أو معرّف المعلم</label><input class="fi" id="schId" type="text" placeholder="school001" onkeydown="if(event.key==='Enter')doSchLogin()"></div>
+        <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="schPw" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doSchLogin()"></div>
+        <button class="btn btn-primary btn-block btn-lg" onclick="doSchLogin()" style="margin-bottom:7px">دخول</button>
+        <button class="btn btn-ghost btn-block" onclick="goHome()">← العودة</button>
+        <div class="login-demo"><b>🔐 تجريبي:</b> مدرسة: <b>school001</b> / <b>school123</b></div>
+      </div>
+      <!-- لوقو 5 ضغطات = admin -->
+      <div style="text-align:center;margin-top:10px">
+        <span id="adminTap" onclick="tapAdmin()" style="font-size:8px;color:transparent;cursor:default;user-select:none">●</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN LOGIN ══ -->
+
+<div id="adLPage" class="page">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-logo"><div class="login-logo-ar">مقام</div><div class="login-logo-en">ADMIN</div></div>
+      <p class="login-tag">لوحة تحكم المدير</p>
+      <div class="fg"><label class="fl">اسم المستخدم</label><input class="fi" id="adId" type="text" placeholder="admin" onkeydown="if(event.key==='Enter')doAdLogin()"></div>
+      <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="adPw" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdLogin()"></div>
+      <button class="btn btn-primary btn-block btn-lg" onclick="doAdLogin()" style="margin-bottom:7px">دخول</button>
+      <button class="btn btn-ghost btn-block" onclick="goHome()">← العودة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STUDENT DASH ══ -->
+
+<div id="dashPage" class="page">
+  <div class="dash-body">
+    <div class="sec-tabs">
+      <button class="sec-tab active" id="tabAb" onclick="switchSec('abilities')">📚 القدرات</button>
+      <button class="sec-tab ac-tab" id="tabAc" onclick="switchSec('academic')">📖 التحصيلي</button>
+    </div>
+    <div class="date-bar">
+      <div><div class="date-day" id="dDay">—</div><div class="date-full" id="dDate">—</div></div>
+      <div class="wk-range" id="dWkR">—</div>
+    </div>
+    <div class="wk-card">
+      <div class="wk-top">
+        <div class="wk-title" id="wkT">التدريب الأسبوعي</div>
+        <div class="wk-acts">
+          <div class="wk-badge" id="wkB">0/5</div>
+          <button class="wk-anal" onclick="goAnalysis()">📊</button>
+        </div>
+      </div>
+      <div class="days-row" id="daysRow"></div>
+      <div class="wk-prog">
+        <div class="wk-bar"><div class="wk-bar-fill" id="wkBF" style="width:0%"></div></div>
+        <div class="wk-pct" id="wkBP">0%</div>
+      </div>
+    </div>
+    <div class="action-cards" id="acCards"></div>
+  </div>
+</div>
+
+<!-- ══ QUESTIONS ══ -->
+
+<div id="qPage" class="page">
+  <div class="q-body">
+    <div class="timer-bar" id="timerBar" style="display:none">
+      <span class="timer-lbl">الوقت المتبقي</span>
+      <span class="timer-val" id="timerV">25:00</span>
+    </div>
+    <div class="q-hdr">
+      <div class="q-meta"><span class="q-lbl" id="qLbl">التدريب اليومي</span><span class="q-cnt" id="qCnt">1/10</span></div>
+      <div class="q-bar"><div class="q-bar-fill" id="qBF" style="width:0%"></div></div>
+      <div class="q-sk-row">
+        <div class="q-skill" id="qSk">—</div>
+        <div style="position:relative">
+          <button class="q-rpt-btn" onclick="toggleRpt(event)">🚩 إبلاغ</button>
+          <div class="rpt-dd" id="rptDd">
+            <div class="rpt-dd-title">نوع الخطأ</div>
+            <div class="rpt-opt" onclick="sendRpt('إملائي')">✏️ خطأ إملائي</div>
+            <div class="rpt-opt" onclick="sendRpt('إجابة خاطئة')">❌ الإجابة خاطئة</div>
+            <div class="rpt-opt" onclick="sendRpt('غير واضح')">❓ غير واضح</div>
+            <div class="rpt-opt" onclick="sendRpt('أكثر من إجابة')">⚖️ أكثر من إجابة</div>
+            <div class="rpt-opt" onclick="sendRpt('خطأ في الأرقام')">🔢 خطأ في الأرقام</div>
+            <div class="rpt-opt" onclick="sendRpt('شرح خاطئ')">💬 الشرح خاطئ</div>
+            <div class="rpt-other">
+              <input class="rpt-other-inp" id="rptOtherInp" placeholder="أخرى — اكتب هنا...">
+              <button class="rpt-other-btn" onclick="sendRptOther()">إرسال</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="q-card"><div class="q-text" id="qText">جاري التحميل...</div><div class="q-svg-wrap" id="qSvg" style="display:none"></div></div>
+    <div class="opts" id="opts"></div>
+    <div class="exp-box" id="expBox"><div class="exp-lbl">💡 الشرح</div><div class="exp-text" id="expText"></div></div>
+    <div class="q-foot">
+      <button class="confirm-btn inactive" id="confBtn" onclick="confirmAns()">تأكيد الإجابة ✓</button>
+      <button class="next-btn inactive" id="nextBtn" onclick="nextQ()">ابدأ التالي ←</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+
+<div id="resPage" class="page">
+  <div class="res-body">
+    <div class="score-ring">
+      <svg width="118" height="118" viewBox="0 0 118 118">
+        <circle cx="59" cy="59" r="49" fill="none" stroke="#d0d7ea" stroke-width="9"/>
+        <circle cx="59" cy="59" r="49" fill="none" stroke="#15803d" stroke-width="9" stroke-linecap="round" stroke-dasharray="307.9" id="scoreArc" stroke-dashoffset="307.9"/>
+      </svg>
+      <div class="score-ring-inner"><div class="score-pct" id="sPct">0%</div><div class="score-lbl">النتيجة</div></div>
+    </div>
+    <div class="res-title" id="resT">أحسنت!</div>
+    <p class="res-sub" id="resS">أكملت التدريب</p>
+    <div class="res-level" id="resLevel" style="display:none">
+      <div class="res-level-title">📊 تحليل مستواك</div>
+      <div class="res-level-text" id="resLevelText"></div>
+    </div>
+    <div class="res-stats">
+      <div class="res-stat"><div class="res-val c-green" id="resC">0</div><div class="res-lbl">صحيح</div></div>
+      <div class="res-stat"><div class="res-val c-red" id="resW">0</div><div class="res-lbl">خطأ</div></div>
+      <div class="res-stat"><div class="res-val c-navy" id="resTot">0</div><div class="res-lbl">المجموع</div></div>
+    </div>
+    <div class="res-acts">
+      <button class="btn btn-primary" style="flex:1" onclick="goDash()">الرئيسية</button>
+      <button class="btn btn-outline" onclick="retryS()">إعادة</button>
+    </div>
+    <button class="res-show-qs" onclick="toggleResQs()">📋 عرض الأسئلة والإجابات</button>
+    <div class="res-qs-panel" id="resQsPanel"></div>
+  </div>
+</div>
+
+<!-- ══ ANALYSIS ══ -->
+
+<div id="anPage" class="page">
+  <div class="an-body">
+    <div style="margin-bottom:13px"><div style="font-size:16px;font-weight:800;margin-bottom:2px">📊 تحليل مستواي</div><div style="font-size:11px;color:var(--text2)" id="anSub">—</div></div>
+    <div class="ov-cards" id="ovCards"></div>
+    <div class="chart-card" id="chartCard" style="display:none"><div class="chart-title">📈 الأداء العام</div><div class="bar-chart" id="mainChart"></div></div>
+    <div class="subj-cards" id="subjCards"></div>
+    <button class="btn btn-ghost btn-block" onclick="loadDash()">← العودة</button>
+  </div>
+</div>
+
+<!-- ══ REPORTS ══ -->
+
+<div id="rpPage" class="page">
+  <div class="rp-body">
+    <div class="pg-title">📈 التقارير</div>
+    <div class="rp-sec"><div class="rp-sec-title">📅 آخر الجلسات</div><div class="wk-bars" id="wkBars"></div></div>
+    <div class="rp-sec"><div class="rp-sec-title">🔥 سجل التدريب — هذا الشهر</div><div class="streak-row" id="streakRow"></div></div>
+    <div class="rp-sec"><div class="rp-sec-title">📊 إحصائيات</div><div class="rp-stat-grid" id="rpStats"></div></div>
+    <div class="rp-sec"><div class="rp-sec-title">⚠️ أضعف المهارات</div><div class="weak-list" id="weakList"></div></div>
+    <button class="btn btn-ghost btn-block" onclick="loadDash()">← العودة</button>
+  </div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+
+<div id="stPage" class="page">
+  <div class="st-body">
+    <div class="pg-title">⚙️ الإعدادات</div>
+    <div class="st-sec">
+      <div class="st-sec-title">الحساب</div>
+      <div class="st-row"><div class="st-row-ic">👤</div><div class="st-row-info"><div class="st-row-lbl" id="stN">—</div><div class="st-row-sub">الاسم</div></div></div>
+      <div class="st-row"><div class="st-row-ic">🏫</div><div class="st-row-info"><div class="st-row-lbl" id="stSch">—</div><div class="st-row-sub">المدرسة</div></div></div>
+      <div class="st-row"><div class="st-row-ic">🔑</div><div class="st-row-info"><div class="st-row-lbl">كلمة المرور</div><div class="st-row-sub">••••••••</div></div><button class="st-action" onclick="openPwModal()">تغيير</button></div>
+    </div>
+    <div class="st-sec">
+      <div class="st-sec-title">التدريب</div>
+      <div class="st-row"><div class="st-row-ic">💡</div><div class="st-row-info"><div class="st-row-lbl">عرض الشرح تلقائياً</div><div class="st-row-sub">بعد تأكيد الإجابة</div></div><button class="toggle on" id="tgE" onclick="toggleSt('exp')"></button></div>
+      <div class="st-row"><div class="st-row-ic">⏱️</div><div class="st-row-info"><div class="st-row-lbl">مؤقت الاختبار</div><div class="st-row-sub">25 دقيقة</div></div><button class="toggle on" id="tgT" onclick="toggleSt('timer')"></button></div>
+    </div>
+    <div class="st-sec">
+      <div class="st-sec-title">البيانات</div>
+      <div class="st-row"><div class="st-row-ic">🗑️</div><div class="st-row-info"><div class="st-row-lbl">مسح سجل التدريب</div><div class="st-row-sub">حذف جميع جلساتك المحفوظة</div></div><button class="st-action" style="color:var(--red);background:var(--red-light)" onclick="confirmClearHistory()">مسح</button></div>
+    </div>
+    <button class="btn btn-ghost btn-block" onclick="loadDash()">← العودة</button>
+  </div>
+</div>
+
+<!-- ══ SCHOOL DASH ══ -->
+
+<div id="schPage" class="page">
+  <div class="sc-body">
+    <div class="sc-welcome"><div class="sw-title" id="scT">مرحباً</div><div class="sw-sub">لوحة تحكم المدرسة</div></div>
+    <div class="sc-tabs">
+      <button class="sc-tab active" onclick="switchScTab('overview',this)">📊 نظرة عامة</button>
+      <button class="sc-tab" onclick="switchScTab('students',this)">👨‍🎓 الطلاب</button>
+      <button class="sc-tab" onclick="switchScTab('teachers',this)">👨‍🏫 المعلمون</button>
+    </div>
+    <!-- نظرة عامة -->
+    <div class="sc-tab-content active" id="sct-overview">
+      <div class="stat-cards">
+        <div class="stat-c"><div class="stat-v" id="sTot">0</div><div class="stat-l">الطلاب</div></div>
+        <div class="stat-c"><div class="stat-v" id="sAct">0</div><div class="stat-l">نشطون</div></div>
+        <div class="stat-c"><div class="stat-v" id="sAvg">—</div><div class="stat-l">متوسط الأداء</div></div>
+        <div class="stat-c"><div class="stat-v" id="sExm">0</div><div class="stat-l">أكملوا الاختبار</div></div>
+      </div>
+    </div>
+    <!-- الطلاب -->
+    <div class="sc-tab-content" id="sct-students">
+      <div class="tbl-card">
+        <div class="tbl-head-row">
+          <div class="tbl-head-title">قائمة الطلاب</div>
+          <div class="tbl-head-actions">
+            <span class="pill pill-navy" id="sCnt">0 طالب</span>
+            <button class="tbl-add-btn" onclick="openAddStudent()">➕ إضافة طالب</button>
+          </div>
+        </div>
+        <div class="tbl-th"><div class="c-name">الاسم</div><div class="c-id">الرقم</div><div class="c-days">التدريبات</div><div class="c-score">النتيجة</div><div class="c-status">الحالة</div><div class="c-act">إجراء</div></div>
+        <div id="tblStd"><div class="pg-empty">لا يوجد طلاب</div></div>
+      </div>
+    </div>
+    <!-- المعلمون -->
+    <div class="sc-tab-content" id="sct-teachers">
+      <div class="tbl-card">
+        <div class="tbl-head-row">
+          <div class="tbl-head-title">قائمة المعلمين</div>
+          <div class="tbl-head-actions">
+            <span class="pill pill-navy" id="tcCnt">0 معلم</span>
+            <button class="tbl-add-btn" onclick="openAddTeacher()">➕ إضافة معلم</button>
+          </div>
+        </div>
+        <div class="tbl-th"><div class="c-name">الاسم</div><div class="c-id">المعرّف</div><div class="c-role">المواد</div><div class="c-act">إجراء</div></div>
+        <div id="tblTch"><div class="pg-empty">لا يوجد معلمون</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TEACHER DASH ══ -->
+
+<div id="tcPage" class="page">
+  <div class="sc-body">
+    <div class="sc-welcome"><div class="sw-title" id="tcT">مرحباً</div><div class="sw-sub" id="tcSub">—</div></div>
+    <div class="stat-cards">
+      <div class="stat-c"><div class="stat-v" id="tTot">0</div><div class="stat-l">الطلاب</div></div>
+      <div class="stat-c"><div class="stat-v" id="tAct">0</div><div class="stat-l">نشطون</div></div>
+      <div class="stat-c"><div class="stat-v" id="tAvg">—</div><div class="stat-l">متوسط الأداء</div></div>
+    </div>
+    <div class="tbl-card">
+      <div class="tbl-head-row"><div class="tbl-head-title">طلاب الصف</div></div>
+      <div class="tbl-th"><div class="c-name">الاسم</div><div class="c-id">الرقم</div><div class="c-days">التدريبات</div><div class="c-score">النتيجة</div><div class="c-status">الحالة</div></div>
+      <div id="tblTcS"><div class="pg-empty">—</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN DASH ══ -->
+
+<div id="adPage" class="page">
+  <div class="sc-body">
+    <div class="ad-welcome"><div class="ad-title">لوحة تحكم المدير</div><div class="ad-sub">Maqam — نظرة شاملة على المنصة</div></div>
+    <div class="sc-tabs">
+      <button class="sc-tab active" onclick="switchAdTab('overview',this)">📊 نظرة عامة</button>
+      <button class="sc-tab" onclick="switchAdTab('schools',this)">🏫 المدارس</button>
+      <button class="sc-tab" onclick="switchAdTab('questions',this)">📚 بنك الأسئلة</button>
+      <button class="sc-tab" onclick="switchAdTab('reports',this)">🚩 البلاغات</button>
+    </div>
+    <!-- نظرة عامة -->
+    <div class="sc-tab-content active" id="adt-overview">
+      <div class="admin-stat-cards">
+        <div class="admin-stat-c"><div class="admin-stat-v" id="adSch">0</div><div class="admin-stat-l">المدارس</div></div>
+        <div class="admin-stat-c"><div class="admin-stat-v" id="adStd">0</div><div class="admin-stat-l">الطلاب</div></div>
+        <div class="admin-stat-c"><div class="admin-stat-v" id="adRpts">0</div><div class="admin-stat-l">البلاغات</div></div>
+        <div class="admin-stat-c"><div class="admin-stat-v" id="adQs">0</div><div class="admin-stat-l">الأسئلة</div></div>
+      </div>
+    </div>
+    <!-- المدارس -->
+    <div class="sc-tab-content" id="adt-schools">
+      <div class="add-form">
+        <div class="add-form-title">➕ إضافة مدرسة</div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">رمز المدرسة</label><input class="fi" id="nSchId" placeholder="school002"></div>
+          <div class="fg"><label class="fl">اسم المدرسة</label><input class="fi" id="nSchNm" placeholder="اسم المدرسة"></div>
+        </div>
+        <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="nSchPw" placeholder="كلمة المرور"></div>
+        <button class="btn btn-primary btn-sm" onclick="addSchool()">إضافة مدرسة</button>
+      </div>
+      <div class="tbl-card">
+        <div class="tbl-head-row"><div class="tbl-head-title">المدارس المسجّلة</div></div>
+        <div class="tbl-th"><div class="c-name">المدرسة</div><div class="c-id">الرمز</div><div class="c-days">الطلاب</div><div class="c-status">الحالة</div><div class="c-act">إجراء</div></div>
+        <div id="tblSch"></div>
+      </div>
+    </div>
+    <!-- بنك الأسئلة -->
+    <div class="sc-tab-content" id="adt-questions">
+      <div class="tbl-card" style="margin-bottom:11px">
+        <div class="tbl-head-row">
+          <div class="tbl-head-title">بنك الأسئلة</div>
+          <button class="tbl-add-btn" onclick="openAddQuestion()">➕ إضافة سؤال</button>
+        </div>
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border)">
+          <div class="q-bank-filters" id="qBankFilters">
+            <button class="q-filter-btn active" onclick="filterQBank('all',this)">الكل</button>
+            <button class="q-filter-btn" onclick="filterQBank('abilities_q',this)">كمي</button>
+            <button class="q-filter-btn" onclick="filterQBank('abilities_v',this)">لفظي</button>
+            <button class="q-filter-btn" onclick="filterQBank('academic_math',this)">رياضيات</button>
+            <button class="q-filter-btn" onclick="filterQBank('academic_phys',this)">فيزياء</button>
+            <button class="q-filter-btn" onclick="filterQBank('academic_chem',this)">كيمياء</button>
+            <button class="q-filter-btn" onclick="filterQBank('academic_bio',this)">أحياء</button>
+          </div>
+          <input class="fi" id="qBankSearch" placeholder="🔍 ابحث في الأسئلة..." oninput="searchQBank()" style="margin-top:6px">
+        </div>
+        <div id="qBankList" style="max-height:500px;overflow-y:auto;padding:10px 14px"><div class="pg-empty">جاري التحميل...</div></div>
+      </div>
+    </div>
+    <!-- البلاغات -->
+    <div class="sc-tab-content" id="adt-reports">
+      <div class="tbl-card">
+        <div class="tbl-head-row"><div class="tbl-head-title">🚩 البلاغات</div></div>
+        <div id="tblRpts"><div class="pg-empty">لا توجد بلاغات</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- تجربة مجانية -->
+
+<div class="modal-ov" id="trialM">
+  <div class="modal">
+    <div class="modal-ic">🎯</div>
+    <div class="modal-title">جرّب مقام مجاناً</div>
+    <p class="modal-sub">أسبوع كامل — 5 تدريبات + الاختبار الأسبوعي، بدون تسجيل</p>
+    <div class="modal-btns" style="flex-direction:column;gap:6px">
+      <button class="btn btn-green btn-block" onclick="closeM('trialM');startTrial()">🚀 ابدأ الأسبوع التجريبي</button>
+      <button class="btn btn-ghost btn-block" onclick="closeM('trialM')">إلغاء</button>
+    </div>
+  </div>
+</div>
+<!-- تدريب إضافي -->
+<div class="modal-ov" id="exM">
+  <div class="modal">
+    <div class="modal-ic">🎯</div>
+    <div class="modal-title">تدريب إضافي</div>
+    <p class="modal-sub" id="exSub">اختر النوع</p>
+    <div class="modal-btns" style="flex-direction:column;gap:5px" id="exBtns"></div>
+  </div>
+</div>
+<!-- خروج من التدريب -->
+<div class="modal-ov" id="exitM">
+  <div class="modal">
+    <div class="modal-ic">⚠️</div>
+    <div class="modal-title">خروج من التدريب؟</div>
+    <p class="modal-sub">لن تُحفظ إجاباتك</p>
+    <div class="modal-btns">
+      <button class="btn btn-red" style="flex:1" onclick="exitSession()">خروج</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeM('exitM')">تراجع</button>
+    </div>
+  </div>
+</div>
+<!-- إضافة طالب -->
+<div class="modal-ov" id="addStudentM">
+  <div class="modal" style="text-align:right">
+    <div class="modal-title" style="text-align:right;margin-bottom:14px">➕ إضافة طالب</div>
+    <div class="fg"><label class="fl">رقم الطالب</label><input class="fi" id="nSId" placeholder="1010"></div>
+    <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" id="nSNm" placeholder="الاسم الكامل"></div>
+    <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="nSPw" placeholder="اتركه فارغاً للافتراضي (رقم+123)"></div>
+    <div class="modal-btns" style="margin-top:4px">
+      <button class="btn btn-primary" style="flex:1" onclick="addStudent()">إضافة</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeM('addStudentM')">إلغاء</button>
+    </div>
+  </div>
+</div>
+<!-- إضافة معلم -->
+<div class="modal-ov" id="addTeacherM">
+  <div class="modal" style="text-align:right">
+    <div class="modal-title" style="text-align:right;margin-bottom:14px">➕ إضافة معلم</div>
+    <div class="form-row">
+      <div class="fg"><label class="fl">المعرّف</label><input class="fi" id="nTId" placeholder="teacher002"></div>
+      <div class="fg"><label class="fl">الاسم</label><input class="fi" id="nTNm" placeholder="الاسم الكامل"></div>
+    </div>
+    <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="nTPw" placeholder="اتركه فارغاً للافتراضي (معرّف+123)"></div>
+    <div class="fg"><label class="fl">المواد</label>
+      <div class="chips" id="tChips">
+        <div class="chip" onclick="toggleChip(this)" data-val="كمي">📐 كمي</div>
+        <div class="chip" onclick="toggleChip(this)" data-val="لفظي">📝 لفظي</div>
+        <div class="chip" onclick="toggleChip(this)" data-val="رياضيات">🔢 رياضيات</div>
+        <div class="chip" onclick="toggleChip(this)" data-val="فيزياء">⚡ فيزياء</div>
+        <div class="chip" onclick="toggleChip(this)" data-val="كيمياء">🧪 كيمياء</div>
+        <div class="chip" onclick="toggleChip(this)" data-val="أحياء">🧬 أحياء</div>
+      </div>
+    </div>
+    <div class="modal-btns" style="margin-top:4px">
+      <button class="btn btn-primary" style="flex:1" onclick="addTeacher()">إضافة</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeM('addTeacherM')">إلغاء</button>
+    </div>
+  </div>
+</div>
+<!-- إضافة/تعديل سؤال -->
+<div class="modal-ov" id="addQM">
+  <div class="modal" style="text-align:right;max-width:480px">
+    <div class="modal-title" style="text-align:right;margin-bottom:14px" id="addQTitle">➕ إضافة سؤال</div>
+    <input type="hidden" id="editQId">
+    <div class="form-row">
+      <div class="fg"><label class="fl">القسم</label>
+        <select class="fi" id="qSec">
+          <option value="abilities_q">كمي</option>
+          <option value="abilities_v">لفظي</option>
+          <option value="academic_math">رياضيات</option>
+          <option value="academic_phys">فيزياء</option>
+          <option value="academic_chem">كيمياء</option>
+          <option value="academic_bio">أحياء</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">المهارة</label><input class="fi" id="qSkill" placeholder="مثال: المعادلات"></div>
+    </div>
+    <div class="fg"><label class="fl">نص السؤال</label><textarea class="fi" id="qTextInput" rows="3" placeholder="اكتب السؤال هنا..." style="resize:vertical"></textarea></div>
+    <div class="fg"><label class="fl">الخيارات (كل سطر خيار)</label><textarea class="fi" id="qOpts" rows="4" placeholder="الخيار أ&#10;الخيار ب&#10;الخيار ج&#10;الخيار د" style="resize:vertical"></textarea></div>
+    <div class="form-row">
+      <div class="fg"><label class="fl">رقم الإجابة الصحيحة (0-3)</label><input class="fi" id="qAns" type="number" min="0" max="3" placeholder="0"></div>
+      <div class="fg"><label class="fl">الشرح</label><input class="fi" id="qExp" placeholder="شرح مختصر"></div>
+    </div>
+    <div class="modal-btns" style="margin-top:4px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveQuestion()">حفظ</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeM('addQM')">إلغاء</button>
+    </div>
+  </div>
+</div>
+<!-- تغيير كلمة المرور -->
+<div class="pw-modal" id="pwModal">
+  <div class="pw-box">
+    <div class="pw-title">🔑 تغيير كلمة المرور</div>
+    <div class="fg"><label class="fl">كلمة المرور الحالية</label><input class="fi" id="pwOld" type="password" placeholder="••••••••"></div>
+    <div class="fg"><label class="fl">كلمة المرور الجديدة</label><input class="fi" id="pwNew" type="password" placeholder="••••••••"></div>
+    <div class="fg"><label class="fl">تأكيد كلمة المرور</label><input class="fi" id="pwConf" type="password" placeholder="••••••••"></div>
+    <div style="display:flex;gap:7px;margin-top:4px">
+      <button class="btn btn-primary" style="flex:1" onclick="changePw()">تغيير</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closePwModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+<!-- تأكيد الحذف -->
+<div class="modal-ov" id="confirmM">
+  <div class="modal">
+    <div class="modal-ic">⚠️</div>
+    <div class="modal-title" id="confirmTitle">تأكيد الحذف</div>
+    <p class="modal-sub" id="confirmSub">هل أنت متأكد؟</p>
+    <div class="modal-btns">
+      <button class="btn btn-red" style="flex:1" id="confirmOkBtn">تأكيد</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="closeM('confirmM')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+/* ════════════════════════════════════════
+MAQAM — الجزء الثالث: JavaScript الأساسي
+Supabase + Auth + Session + Questions
+════════════════════════════════════════ */
+
+/* ── SUPABASE ── */
+const SB_URL = “https://bljrbdrbrmbhcmjkuxzu.supabase.co”;
+const SB_KEY = “eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsanJiZHJicm1iaGNtamt1eHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDYwOTUsImV4cCI6MjA5MzQ4MjA5NX0.YjmoRWuV8BFvfvwwrZ3aSglVZ3AlDIfNcl1zOREOOc4”;
+
+async function sb(table, method=“GET”, body=null, query=””) {
+const opts = {
+method,
+headers: {
+“Content-Type”: “application/json”,
+“Authorization”: `Bearer ${SB_KEY}`,
+“apikey”: SB_KEY,
+“Prefer”: method === “POST” ? “return=representation” : “”
+}
+};
+if (body) opts.body = JSON.stringify(body);
+const res = await fetch(`${SB_URL}/rest/v1/${table}${query}`, opts);
+if (!res.ok) {
+const err = await res.text();
+throw new Error(err);
+}
+const text = await res.text();
+return text ? JSON.parse(text) : [];
 }
 
-// ====== STATE ======
+/* ── STATE ── */
 let S = {
-  qs: [],
-  idx: 0,
-  ans: [],
-  selected: null,
-  answered: false
+user: null,
+sec: “abilities”,
+qs: [], idx: 0, ans: [],
+answered: false, selected: null,
+sessionType: “”, prevPage: “homePage”,
+timer: null, timerSecs: 0, lastQT: “”,
+settings: { exp: true, timer: true },
+qBank: [], qBankFilter: “all”,
+adminTaps: 0
 };
 
-// ====== LOAD QUESTIONS ======
-async function loadQuestions() {
-  const data = await sb("&limit=10");
-  S.qs = data;
-  S.idx = 0;
-  S.ans = [];
-  loadQ();
+/* ── INIT ── */
+async function init() {
+setDb(“loading”, “جاري الاتصال”);
+try {
+await sb(“schools”, “GET”, null, “?limit=1”);
+setDb(“ok”, “Supabase ✓”);
+// تحديث عداد الأسئلة في الصفحة الرئيسية
+const qCount = await sb(“questions”, “GET”, null, “?select=id&limit=1”);
+loadQCount();
+} catch(e) {
+setDb(“err”, “خطأ في الاتصال”);
+}
+// استعادة الجلسة من localStorage
+const saved = localStorage.getItem(“mq_user”);
+if (saved) {
+try {
+S.user = JSON.parse(saved);
+updateDrw();
+if (S.user.type === “student”) loadDash();
+else if (S.user.type === “school”) loadSchDash();
+else if (S.user.type === “teacher”) loadTcDash();
+else if (S.user.type === “admin”) loadAdDash();
+} catch(e) { localStorage.removeItem(“mq_user”); }
+}
+document.getElementById(“ls”).classList.add(“hide”);
 }
 
-// ====== LOAD QUESTION ======
+async function loadQCount() {
+try {
+const res = await fetch(`${SB_URL}/rest/v1/questions?select=count`, {
+headers: { “Authorization”: `Bearer ${SB_KEY}`, “apikey”: SB_KEY, “Prefer”: “count=exact” }
+});
+const count = res.headers.get(“content-range”);
+if (count) {
+const n = parseInt(count.split(”/”)[1]) || 0;
+const el = document.getElementById(“homeQCount”);
+if (el) el.textContent = “+” + n.toLocaleString(“ar”);
+}
+} catch(e) {}
+}
+
+/* ── PAGES ── */
+function showPage(id, back=false) {
+document.querySelectorAll(”.page”).forEach(p => p.classList.remove(“active”));
+document.getElementById(id).classList.add(“active”);
+window.scrollTo(0, 0);
+document.getElementById(“nvBack”).classList.toggle(“show”, back);
+}
+function handleBack() {
+if (S.sessionType) { document.getElementById(“exitM”).classList.add(“open”); return; }
+showPage(S.prevPage || “homePage”);
+}
+function setDb(s, l) {
+document.getElementById(“dbDot”).className = “db-dot “ + s;
+document.getElementById(“dbLbl”).textContent = l;
+}
+function goHome() { S.prevPage = “homePage”; updateNav(); showPage(“homePage”); }
+function goAbout() { S.prevPage = “homePage”; showPage(“aboutPage”, true); }
+function goLogin() { S.prevPage = “homePage”; showPage(“loginPage”, true); }
+function goDash() { S.user?.type === “student” ? loadDash() : goHome(); }
+function retryS() { S.lastQT ? startExtra(S.lastQT) : startDaily(); }
+function goAnalysis() { buildAnalysis(); showPage(“anPage”, true); }
+function goReports() { buildReports(); showPage(“rpPage”, true); }
+function goSettings() { buildSettings(); showPage(“stPage”, true); }
+
+function updateNav() {
+const logo = document.getElementById(“nvLogo”);
+const user = document.getElementById(“nvUser”);
+if (!S.user || S.user.type === “guest”) {
+logo.style.display = “”; user.style.display = “none”;
+} else {
+logo.style.display = “none”; user.style.display = “flex”;
+document.getElementById(“nvUN”).textContent = S.user.name || S.user.id;
+document.getElementById(“nvUS”).textContent = S.user.school_name || “”;
+}
+}
+
+/* ── DRAWER ── */
+function openDrw() { document.getElementById(“drw”).classList.add(“open”); document.getElementById(“drwOv”).classList.add(“open”); }
+function closeDrw() { document.getElementById(“drw”).classList.remove(“open”); document.getElementById(“drwOv”).classList.remove(“open”); }
+function updateDrw() {
+[“gMenu”,“stMenu”,“tcMenu”,“scMenu”,“adMenu”].forEach(m => document.getElementById(m).style.display = “none”);
+const du = document.getElementById(“drwUser”);
+const dt = document.getElementById(“drwST”);
+du.style.display = “none”; dt.style.display = “none”;
+updateNav();
+if (!S.user || S.user.type === “guest”) {
+document.getElementById(“gMenu”).style.display = “block”; return;
+}
+du.style.display = “block”;
+document.getElementById(“drwN”).textContent = S.user.name || S.user.id;
+const meta = S.user.type === “student” ? `طالب — ${S.user.school_name||""}` :
+S.user.type === “teacher” ? `معلم — ${S.user.school_name||""}` :
+S.user.type === “school”  ? `مدرسة` : “مدير النظام”;
+document.getElementById(“drwM”).textContent = meta;
+if (S.user.type === “student”) {
+document.getElementById(“stMenu”).style.display = “block”;
+dt.style.display = “grid”;
+document.getElementById(“dTabAb”).classList.toggle(“active”, S.sec === “abilities”);
+document.getElementById(“dTabAc”).classList.toggle(“active”, S.sec === “academic”);
+} else if (S.user.type === “teacher”) document.getElementById(“tcMenu”).style.display = “block”;
+else if (S.user.type === “school”)   document.getElementById(“scMenu”).style.display = “block”;
+else if (S.user.type === “admin”)    document.getElementById(“adMenu”).style.display = “block”;
+}
+function switchSec(s) {
+S.sec = s;
+[“tabAb”,“tabAc”,“dTabAb”,“dTabAc”].forEach(id => {
+const el = document.getElementById(id); if (!el) return;
+el.classList.toggle(“active”, s === “abilities” ? id.includes(“Ab”) : !id.includes(“Ab”));
+});
+fillWkCard(); buildAcCards(); updateDrw();
+}
+
+/* ── LOGIN ── */
+let loginTab = “student”;
+function switchLoginTab(t) {
+loginTab = t;
+document.getElementById(“ltStudent”).classList.toggle(“active”, t === “student”);
+document.getElementById(“ltSchool”).classList.toggle(“active”, t === “school”);
+document.getElementById(“loginStudent”).style.display = t === “student” ? “” : “none”;
+document.getElementById(“loginSchool”).style.display  = t === “school”  ? “” : “none”;
+}
+
+// 5 ضغطات على الرمز الخفي = صفحة المدير
+let tapCount = 0;
+function tapAdmin() {
+tapCount++;
+if (tapCount >= 5) { tapCount = 0; showPage(“adLPage”, true); }
+setTimeout(() => { tapCount = 0; }, 3000);
+}
+
+async function doLogin() {
+const id = document.getElementById(“sId”).value.trim();
+const pw = document.getElementById(“sPw”).value.trim();
+if (!id || !pw) { toast(“يرجى إدخال البيانات”, “err”); return; }
+try {
+const rows = await sb(“students”, “GET”, null, `?id=eq.${id}&password=eq.${pw}&limit=1`);
+if (!rows.length) { toast(“بيانات غير صحيحة”, “err”); return; }
+const std = rows[0];
+// جلب اسم المدرسة
+let school_name = “”;
+try {
+const schs = await sb(“schools”, “GET”, null, `?id=eq.${std.school_id}&select=name&limit=1`);
+if (schs.length) school_name = schs[0].name;
+} catch(e) {}
+S.user = { …std, type: “student”, school_name };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadDash();
+} catch(e) { toast(“خطأ في الاتصال”, “err”); }
+}
+
+async function doSchLogin() {
+const id = document.getElementById(“schId”).value.trim();
+const pw = document.getElementById(“schPw”).value.trim();
+if (!id || !pw) { toast(“يرجى إدخال البيانات”, “err”); return; }
+try {
+// تحقق معلم أولاً
+const tchs = await sb(“teachers”, “GET”, null, `?id=eq.${id}&password=eq.${pw}&limit=1`);
+if (tchs.length) {
+const tc = tchs[0];
+let school_name = “”;
+try { const s = await sb(“schools”,“GET”,null,`?id=eq.${tc.school_id}&select=name&limit=1`); if(s.length) school_name=s[0].name; } catch(e) {}
+S.user = { …tc, type: “teacher”, school_name };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadTcDash(); return;
+}
+// تحقق مدرسة
+const schs = await sb(“schools”, “GET”, null, `?id=eq.${id}&password=eq.${pw}&limit=1`);
+if (schs.length) {
+S.user = { …schs[0], type: “school”, school_name: schs[0].name };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadSchDash(); return;
+}
+toast(“بيانات غير صحيحة”, “err”);
+} catch(e) { toast(“خطأ في الاتصال”, “err”); }
+}
+
+async function doAdLogin() {
+const id = document.getElementById(“adId”).value.trim();
+const pw = document.getElementById(“adPw”).value.trim();
+if (id === “admin” && pw === “mqam2026”) {
+S.user = { id: “admin”, name: “المدير”, type: “admin” };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadAdDash();
+} else toast(“بيانات غير صحيحة”, “err”);
+}
+
+function logout() {
+S.user = null;
+localStorage.removeItem(“mq_user”);
+updateDrw(); closeDrw(); goHome();
+}
+
+/* ── STUDENT DASH ── */
+async function loadDash() {
+S.sessionType = “”; S.prevPage = “dashPage”;
+updateNav(); fillDateBar(); await fillWkCard(); buildAcCards();
+showPage(“dashPage”);
+}
+
+function fillDateBar() {
+const n = new Date();
+const days = [“الأحد”,“الاثنين”,“الثلاثاء”,“الأربعاء”,“الخميس”,“الجمعة”,“السبت”];
+const mons = [“يناير”,“فبراير”,“مارس”,“أبريل”,“مايو”,“يونيو”,“يوليو”,“أغسطس”,“سبتمبر”,“أكتوبر”,“نوفمبر”,“ديسمبر”];
+document.getElementById(“dDay”).textContent = days[n.getDay()];
+document.getElementById(“dDate”).textContent = `${n.getDate()} ${mons[n.getMonth()]} ${n.getFullYear()}`;
+const sun = new Date(n); sun.setDate(n.getDate() - n.getDay());
+const thu = new Date(sun); thu.setDate(sun.getDate() + 4);
+document.getElementById(“dWkR”).textContent = `${sun.getDate()} - ${thu.getDate()} ${mons[sun.getMonth()]}`;
+}
+
+function wkKey() {
+const n = new Date(), s = new Date(n.getFullYear(), 0, 1);
+return n.getFullYear() + “*W” + Math.ceil((n - s) / 604800000) + “*” + S.sec;
+}
+function todayKey() { return [“sun”,“mon”,“tue”,“wed”,“thu”,“fri”,“sat”][new Date().getDay()]; }
+
+async function getProgress() {
+const uid = S.user?.id || “guest”;
+const wk  = wkKey();
+try {
+const rows = await sb(“sessions”, “GET”, null,
+`?student_id=eq.${uid}&week_key=eq.${wk}&type=eq.daily&select=day_key`);
+const done = {};
+rows.forEach(r => { if (r.day_key) done[r.day_key] = true; });
+return done;
+} catch(e) {
+// fallback localStorage
+const lk = `mq_pg_${uid}_${wk}`;
+try { return JSON.parse(localStorage.getItem(lk)) || {}; } catch(e2) { return {}; }
+}
+}
+
+async function fillWkCard() {
+const done = await getProgress();
+const keys = [“sun”,“mon”,“tue”,“wed”,“thu”];
+const names = [“أحد”,“اثنين”,“ثلاثاء”,“أربعاء”,“خميس”];
+const today = new Date().getDay();
+const isTrial = S.user?.type === “guest”;
+
+document.getElementById(“wkT”).textContent =
+`ابدأ التدريب الأسبوعي — ${S.sec === "abilities" ? "القدرات" : "التحصيلي"}`;
+
+const row = document.getElementById(“daysRow”);
+row.innerHTML = “”;
+keys.forEach((k, i) => {
+let cls = “day-pill”, ic = “○”;
+if (done[k]) { cls += “ done”; ic = “✅”; }
+else if (isTrial || today < 1) { cls += “ today”; ic = “📝”; }
+else {
+if (i === today && today < 5) { cls += “ today”; ic = “📝”; }
+else if (i < today && today < 5) { cls += “ missed”; ic = “❌”; }
+else { cls += “ locked”; ic = “🔒”; }
+}
+row.innerHTML += `<div class="${cls}"><span class="day-name">${names[i]}</span><span class="day-ic">${ic}</span></div>`;
+});
+
+const doneCount = keys.filter(k => done[k]).length;
+const pct = Math.round((doneCount / 5) * 100);
+document.getElementById(“wkB”).textContent = `${doneCount}/5`;
+document.getElementById(“wkBF”).style.width = pct + “%”;
+document.getElementById(“wkBP”).textContent = pct + “%”;
+}
+
+function buildAcCards() {
+const isAb = S.sec === “abilities”;
+document.getElementById(“acCards”).innerHTML = ` <div class="ac" onclick="startDaily()"> <div class="ac-ic ic-navy">📝</div> <div class="ac-body"> <div class="ac-title">ابدأ التدريب اليومي</div> <div class="ac-desc">${isAb ? "10 أسئلة كمي ولفظي" : "10 أسئلة من جميع المواد"}</div> </div> <span class="badge b-navy">جديد</span> <div class="ac-arr">←</div> </div> <div class="ac" id="examCard" onclick="startExam()"> <div class="ac-ic ic-green">✅</div> <div class="ac-body"> <div class="ac-title">الاختبار الأسبوعي</div> <div class="ac-desc" id="examDesc">أكمل 5 تدريبات أولاً</div> </div> <span class="badge b-amber" id="examBadge">🔒 مقفل</span> <div class="ac-arr">←</div> </div> <div class="ac" onclick="showExModal()"> <div class="ac-ic ic-gold">🎯</div> <div class="ac-body"> <div class="ac-title">تدريب إضافي</div> <div class="ac-desc">${isAb ? "كمي أو لفظي أو مختلط" : "اختر مادة أو الكل"}</div> </div> <div class="ac-arr">←</div> </div>`;
+updateExamCard();
+}
+
+async function updateExamCard() {
+const done = await getProgress();
+const doneCount = [“sun”,“mon”,“tue”,“wed”,“thu”].filter(k => done[k]).length;
+const today = new Date().getDay();
+const isTrial = S.user?.type === “guest”;
+const card = document.getElementById(“examCard”);
+const desc = document.getElementById(“examDesc”);
+const badge = document.getElementById(“examBadge”);
+if (!card) return;
+if (doneCount >= 5 && (today === 5 || isTrial)) {
+card.classList.remove(“disabled”);
+desc.textContent = “الاختبار مفتوح الآن”;
+badge.className = “badge b-green”; badge.textContent = “✅ متاح”;
+} else if (doneCount >= 5) {
+card.classList.remove(“disabled”);
+desc.textContent = “يفتح يوم الجمعة”;
+badge.className = “badge b-amber”; badge.textContent = “📅 الجمعة”;
+} else {
+card.classList.add(“disabled”);
+desc.textContent = `أكمل ${5 - doneCount} تدريبات إضافية`;
+badge.className = “badge b-amber”; badge.textContent = `🔒 ${doneCount}/5`;
+}
+}
+
+/* ── QUESTIONS FROM SUPABASE ── */
+const shuf = a => […a].sort(() => Math.random() - .5);
+
+async function fetchQuestions(section, limit=10) {
+try {
+// جلب أسئلة عشوائية من Supabase
+const rows = await sb(“questions”, “GET”, null,
+`?section=eq.${section}&limit=${limit * 5}&select=*`);
+return shuf(rows).slice(0, limit);
+} catch(e) {
+toast(“خطأ في جلب الأسئلة”, “err”);
+return [];
+}
+}
+
+async function buildMixed(n, sec) {
+if (sec === “abilities”) {
+const h = Math.floor(n / 2);
+const [q, v] = await Promise.all([
+fetchQuestions(“abilities_q”, h),
+fetchQuestions(“abilities_v”, n - h)
+]);
+return shuf([…q, …v]);
+}
+const [m, p, c, b] = await Promise.all([
+fetchQuestions(“academic_math”, Math.ceil(n/4)),
+fetchQuestions(“academic_phys”, Math.ceil(n/4)),
+fetchQuestions(“academic_chem”, Math.ceil(n/4)),
+fetchQuestions(“academic_bio”,  Math.floor(n/4))
+]);
+return shuf([…m, …p, …c, …b]).slice(0, n);
+}
+
+/* ── SESSIONS ── */
+async function startDaily() {
+if (S.user?.type !== “guest”) {
+const done = await getProgress();
+const keys = [“sun”,“mon”,“tue”,“wed”,“thu”];
+const today = new Date().getDay();
+if (today >= 5) { toast(“التدريب من الأحد إلى الخميس”, “err”); return; }
+const k = keys[today];
+if (done[k]) { toast(“أكملت تدريب اليوم ✓”, “ok”); return; }
+}
+toast(“جاري تحميل الأسئلة…”, “ok”);
+S.sessionType = “daily”; S.lastQT = “daily”;
+const qs = await buildMixed(10, S.sec);
+if (!qs.length) return;
+startSession(qs, “التدريب اليومي”, false);
+}
+
+async function startExam() {
+const done = await getProgress();
+const doneCount = [“sun”,“mon”,“tue”,“wed”,“thu”].filter(k => done[k]).length;
+if (doneCount < 5) { toast(“أكمل 5 تدريبات أولاً”, “err”); return; }
+if (new Date().getDay() !== 5 && S.user?.type !== “guest”) {
+toast(“الاختبار متاح يوم الجمعة فقط”, “err”); return;
+}
+toast(“جاري تحميل الاختبار…”, “ok”);
+S.sessionType = “exam”; S.lastQT = “exam”;
+const qs = await buildMixed(40, S.sec);
+if (!qs.length) return;
+startSession(qs, “الاختبار الأسبوعي”, S.settings.timer !== false, 25 * 60);
+}
+
+function showExModal() {
+const isAb = S.sec === “abilities”;
+document.getElementById(“exSub”).textContent = isAb ? “اختر نوع التدريب” : “اختر المادة”;
+document.getElementById(“exBtns”).innerHTML = isAb
+? `<button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('mixed')">📚 كمي ولفظي</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('q_only')">📐 كمي فقط</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('v_only')">📝 لفظي فقط</button> <button class="btn btn-ghost btn-block" onclick="closeM('exM')">إلغاء</button>`
+: `<button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('acmix')">📖 جميع المواد</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('math')">🔢 رياضيات</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('phys')">⚡ فيزياء</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('chem')">🧪 كيمياء</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('bio')">🧬 أحياء</button> <button class="btn btn-ghost btn-block" onclick="closeM('exM')">إلغاء</button>`;
+document.getElementById(“exM”).classList.add(“open”);
+}
+
+async function startExtra(type, skillName=null) {
+S.sessionType = “extra”; S.lastQT = type;
+toast(“جاري تحميل الأسئلة…”, “ok”);
+let qs = [], label = “”;
+if (type === “skill” && skillName) {
+try {
+const rows = await sb(“questions”,“GET”,null,`?skill=eq.${encodeURIComponent(skillName)}&limit=50`);
+qs = shuf(rows).slice(0, 10); label = skillName;
+} catch(e) { toast(“خطأ”, “err”); return; }
+} else {
+const map = {
+mixed:  [() => buildMixed(10, “abilities”),   “مختلط”],
+q_only: [() => fetchQuestions(“abilities_q”,10), “كمي”],
+v_only: [() => fetchQuestions(“abilities_v”,10), “لفظي”],
+acmix:  [() => buildMixed(10, “academic”),    “تحصيلي”],
+math:   [() => fetchQuestions(“academic_math”,10), “رياضيات”],
+phys:   [() => fetchQuestions(“academic_phys”,10), “فيزياء”],
+chem:   [() => fetchQuestions(“academic_chem”,10), “كيمياء”],
+bio:    [() => fetchQuestions(“academic_bio”, 10), “أحياء”],
+};
+const [fn, lbl] = map[type] || [() => buildMixed(10, S.sec), “إضافي”];
+qs = await fn(); label = lbl;
+}
+if (!qs.length) { toast(“لا توجد أسئلة كافية”, “err”); return; }
+startSession(qs, label, false);
+}
+
+function startTrial() {
+S.user = { id: “guest_” + Date.now(), name: “زائر”, type: “guest”, school_name: “” };
+S.sec = “abilities”; updateDrw(); loadDash();
+toast(“مرحباً! ابدأ تدريبك الأول 👋”, “ok”);
+}
+
+function startSession(qs, label, hasTimer, secs=0) {
+S.qs = qs; S.idx = 0; S.ans = []; S.answered = false; S.selected = null;
+document.getElementById(“qLbl”).textContent = label;
+const tb = document.getElementById(“timerBar”);
+if (hasTimer && secs > 0) {
+S.timerSecs = secs; tb.style.display = “flex”; startTimer();
+} else { tb.style.display = “none”; clearInterval(S.timer); }
+loadQ(); showPage(“qPage”, true);
+}
+
+/* ── QUESTION DISPLAY ── */
+function getSkLbl(q) {
+const map = {
+abilities_q:“📐 كمي”, abilities_v:“📝 لفظي”,
+academic_math:“🔢 رياضيات”, academic_phys:“⚡ فيزياء”,
+academic_chem:“🧪 كيمياء”, academic_bio:“🧬 أحياء”
+};
+return `${map[q.section]||"🎯"} — ${q.skill}`;
+}
+
 function loadQ() {
-  const q = S.qs[S.idx];
-  const total = S.qs.length;
-
-  document.getElementById("qCnt").textContent = `${S.idx+1}/${total}`;
-  document.getElementById("qText").textContent = q.text;
-
-  const opts = Array.isArray(q.opts) ? q.opts : JSON.parse(q.opts || "[]");
-
-  document.getElementById("opts").innerHTML = opts.map((o,i)=>`
-    <button class="opt" onclick="pick(${i})">${o}</button>
-  `).join("");
-
-  S.selected = null;
-  S.answered = false;
+const q = S.qs[S.idx], tot = S.qs.length;
+document.getElementById(“qCnt”).textContent = `${S.idx+1}/${tot}`;
+document.getElementById(“qBF”).style.width = Math.round((S.idx / tot) * 100) + “%”;
+document.getElementById(“qSk”).textContent = getSkLbl(q);
+document.getElementById(“qText”).textContent = q.text;
+const sw = document.getElementById(“qSvg”);
+if (q.svg) { sw.style.display = “flex”; sw.innerHTML = q.svg; }
+else { sw.style.display = “none”; sw.innerHTML = “”; }
+const L = [“أ”,“ب”,“ج”,“د”];
+const opts = Array.isArray(q.opts) ? q.opts : JSON.parse(q.opts || “[]”);
+document.getElementById(“opts”).innerHTML = opts.map((o, i) =>
+`<button class="opt" onclick="pick(${i})"> <span class="opt-letter">${L[i]}</span> <span class="opt-text">${o}</span> <span class="opt-ric" id="oic${i}"></span> </button>`).join(””);
+document.getElementById(“expBox”).classList.remove(“show”);
+document.getElementById(“rptDd”).classList.remove(“open”);
+document.getElementById(“rptOtherInp”).value = “”;
+const cb = document.getElementById(“confBtn”), nb = document.getElementById(“nextBtn”);
+cb.className = “confirm-btn inactive”; cb.style.display = “”;
+nb.className = “next-btn inactive”;
+nb.textContent = S.idx === tot - 1 ? “إنهاء ←” : “ابدأ التالي ←”;
+S.answered = false; S.selected = null;
+if (window.MathJax?.typesetPromise)
+MathJax.typesetPromise([document.getElementById(“qText”), document.getElementById(“opts”)]).catch(()=>{});
 }
 
-// ====== PICK ======
 function pick(i) {
-  if (S.answered) return;
-
-  S.selected = i;
-
-  document.querySelectorAll(".opt")
-    .forEach((b,idx)=>b.classList.toggle("selected", idx===i));
+if (S.answered) return;
+S.selected = i;
+document.querySelectorAll(”.opt”).forEach((b, idx) => b.classList.toggle(“selected”, idx === i));
+document.getElementById(“confBtn”).className = “confirm-btn active”;
 }
 
-// ====== CONFIRM ======
 function confirmAns() {
-  if (S.selected === null || S.answered) return;
-
-  const q = S.qs[S.idx];
-  S.answered = true;
-  S.ans[S.idx] = S.selected;
-
-  const btns = document.querySelectorAll(".opt");
-
-  btns.forEach(b => b.disabled = true);
-
-  btns[S.selected].classList.add(
-    S.selected === q.ans ? "correct" : "wrong"
-  );
-
-  if (S.selected !== q.ans) {
-    btns[q.ans].classList.add("correct");
-  }
+if (S.answered || S.selected === null) return;
+S.answered = true;
+const i = S.selected, q = S.qs[S.idx];
+S.ans[S.idx] = i;
+const btns = document.querySelectorAll(”.opt”);
+btns.forEach(b => b.disabled = true);
+btns[i].classList.remove(“selected”);
+btns[i].classList.add(i === q.ans ? “correct” : “wrong”);
+document.getElementById(`oic${i}`).textContent = i === q.ans ? “✓” : “✗”;
+if (i !== q.ans) {
+btns[q.ans].classList.add(“correct”);
+document.getElementById(`oic${q.ans}`).textContent = “✓”;
+}
+document.getElementById(“qBF”).style.width = Math.round(((S.idx+1)/S.qs.length)*100) + “%”;
+if (S.settings.exp !== false) {
+document.getElementById(“expText”).textContent = q.exp || “”;
+document.getElementById(“expBox”).classList.add(“show”);
+if (window.MathJax?.typesetPromise)
+MathJax.typesetPromise([document.getElementById(“expBox”)]).catch(()=>{});
+}
+document.getElementById(“confBtn”).style.display = “none”;
+document.getElementById(“nextBtn”).className = “next-btn active”;
 }
 
-// ====== NEXT ======
 function nextQ() {
-  if (!S.answered) return;
-
-  if (S.idx < S.qs.length - 1) {
-    S.idx++;
-    loadQ();
-  } else {
-    finish();
-  }
+if (!S.answered) return;
+if (S.idx < S.qs.length - 1) { S.idx++; loadQ(); }
+else finishSession();
 }
 
-// ====== FINISH ======
-function finish() {
-  const total = S.qs.length;
-  const correct = S.qs.filter((q,i)=>S.ans[i] === q.ans).length;
+/* ── FINISH ── */
+async function finishSession() {
+clearInterval(S.timer);
+const tot = S.qs.length;
+const cor = S.qs.filter((q, i) => S.ans[i] === q.ans).length;
+const pct = Math.round((cor / tot) * 100);
+const prev = S.sessionType;
+S.sessionType = “”;
 
-  alert(`النتيجة: ${correct} / ${total}`);
+// حفظ الجلسة في Supabase
+if (S.user?.type === “student”) {
+const sessionData = {
+student_id: S.user.id,
+section: S.sec,
+type: prev,
+score: pct,
+correct: cor,
+total: tot,
+week_key: wkKey(),
+day_key: prev === “daily” ? todayKey() : null,
+questions: S.qs.map((q, idx) => ({ id: q.id, skill: q.skill, correct: S.ans[idx] === q.ans }))
+};
+try {
+await sb(“sessions”, “POST”, sessionData);
+} catch(e) {
+// fallback localStorage
+const lsKey = `mq_sessions_${S.user.id}`;
+const hist = JSON.parse(localStorage.getItem(lsKey) || “[]”);
+hist.unshift({ …sessionData, date: new Date().toISOString() });
+if (hist.length > 60) hist.pop();
+localStorage.setItem(lsKey, JSON.stringify(hist));
+}
 }
 
-// ====== START ======
-loadQuestions();
-</script>
+// عرض النتيجة
+const [t, s] = pct >= 85 ? [“🏆 ممتاز!”, “أداء رائع”] :
+pct >= 70 ? [“👍 جيد جداً!”, “نتيجة جيدة”] :
+pct >= 50 ? [“💪 جيد!”, “واصل التدريب”] :
+[“📚 واصل!”, “لكل مجتهد مقام”];
+document.getElementById(“sPct”).textContent = pct + “%”;
+document.getElementById(“resC”).textContent = cor;
+document.getElementById(“resW”).textContent = tot - cor;
+document.getElementById(“resTot”).textContent = tot;
+document.getElementById(“scoreArc”).style.strokeDashoffset = 307.9 - (pct / 100) * 307.9;
+document.getElementById(“resT”).textContent = t;
+document.getElementById(“resS”).textContent = s;
 
-</body>
-</html>
+// تحليل المستوى
+const levelEl = document.getElementById(“resLevel”);
+const levelText = document.getElementById(“resLevelText”);
+const levelMsg = pct >= 85 ? “مستواك ممتاز! أداؤك يتجاوز معظم الطلاب. واصل هذا المستوى وركّز على الحفاظ عليه.” :
+pct >= 70 ? “مستواك جيد جداً. بقليل من التدريب الإضافي ستصل للمستوى الممتاز.” :
+pct >= 50 ? “مستواك متوسط. ركّز على المهارات الضعيفة عبر التدريب الإضافي.” :
+“تحتاج لمزيد من التدريب. لا تستسلم — كل طالب مجتهد يصل لهدفه!”;
+levelEl.style.display = “”; levelText.textContent = levelMsg;
+
+// لوحة الأسئلة
+document.getElementById(“resQsPanel”).innerHTML = S.qs.map((q, idx) => {
+const correct = S.ans[idx] === q.ans;
+const opts = Array.isArray(q.opts) ? q.opts : JSON.parse(q.opts || “[]”);
+return `<div class="res-q-item"> <div class="res-q-ic">${correct ? "✅" : "❌"}</div> <div class="res-q-info"> <div class="res-q-text">${q.text}</div> <div class="res-q-skill">${getSkLbl(q)} | الإجابة: ${opts[q.ans] || ""}</div> </div> </div>`;
+}).join(””);
+document.getElementById(“resQsPanel”).classList.remove(“open”);
+
+showPage(“resPage”);
+}
+
+function toggleResQs() {
+document.getElementById(“resQsPanel”).classList.toggle(“open”);
+}
+
+/* ── TIMER ── */
+function startTimer() {
+clearInterval(S.timer);
+S.timer = setInterval(() => {
+S.timerSecs–;
+const m = String(Math.floor(S.timerSecs / 60)).padStart(2, “0”);
+const s = String(S.timerSecs % 60).padStart(2, “0”);
+const el = document.getElementById(“timerV”);
+el.textContent = `${m}:${s}`;
+el.classList.toggle(“warn”, S.timerSecs <= 60);
+if (S.timerSecs <= 0) { clearInterval(S.timer); toast(“انتهى الوقت!”, “err”); finishSession(); }
+}, 1000);
+}
+
+/* ── REPORT ── */
+function toggleRpt(e) { e.stopPropagation(); document.getElementById(“rptDd”).classList.toggle(“open”); }
+
+async function sendRpt(type) {
+const q = S.qs[S.idx];
+try {
+await sb(“reports”, “POST”, {
+question_id: q.id, question_text: q.text,
+type, student_id: S.user?.id || “guest”
+});
+} catch(e) {}
+document.getElementById(“rptDd”).classList.remove(“open”);
+toast(“✓ تم إرسال البلاغ للمدير”, “ok”);
+}
+
+async function sendRptOther() {
+const note = document.getElementById(“rptOtherInp”).value.trim();
+if (!note) { toast(“اكتب ملاحظتك أولاً”, “err”); return; }
+const q = S.qs[S.idx];
+try {
+await sb(“reports”, “POST”, {
+question_id: q.id, question_text: q.text,
+type: “أخرى”, note, student_id: S.user?.id || “guest”
+});
+} catch(e) {}
+document.getElementById(“rptDd”).classList.remove(“open”);
+toast(“✓ تم إرسال البلاغ”, “ok”);
+}
+document.addEventListener(“click”, () => document.getElementById(“rptDd”)?.classList.remove(“open”));
+
+/* ── ANALYSIS ── */
+function lvl(p) {
+if (p >= 80) return { l:“ممتاز”, c:“fill-great”, lv:“lvl-great” };
+if (p >= 65) return { l:“جيد”, c:“fill-good”, lv:“lvl-good” };
+if (p >= 50) return { l:“متوسط”, c:“fill-avg”, lv:“lvl-avg” };
+return { l:“يحتاج تحسين”, c:“fill-weak”, lv:“lvl-weak” };
+}
+
+async function buildAnalysis() {
+const uid = S.user?.id;
+let hist = [];
+try {
+hist = await sb(“sessions”,“GET”,null,`?student_id=eq.${uid}&section=eq.${S.sec}&order=created_at.desc&limit=60`);
+} catch(e) {
+try { hist = JSON.parse(localStorage.getItem(`mq_sessions_${uid}`) || “[]”).filter(s => s.section === S.sec); } catch(e2) {}
+}
+
+document.getElementById(“anSub”).textContent = `تحليل أدائك في ${S.sec === "abilities" ? "القدرات" : "التحصيلي"}`;
+const ts = hist.length;
+const avg = ts ? Math.round(hist.reduce((a,b) => a + (b.score||0), 0) / ts) : 0;
+const tq = hist.reduce((a,b) => a + (b.total||0), 0);
+const tc = hist.reduce((a,b) => a + (b.correct||0), 0);
+document.getElementById(“ovCards”).innerHTML = ` <div class="ov-card"><div class="ov-val">${ts}</div><div class="ov-lbl">جلسة</div></div> <div class="ov-card"><div class="ov-val">${avg}%</div><div class="ov-lbl">متوسط</div></div> <div class="ov-card"><div class="ov-val">${tq}</div><div class="ov-lbl">سؤال</div></div> <div class="ov-card"><div class="ov-val">${tc}</div><div class="ov-lbl">صحيح</div></div>`;
+
+const ss = {};
+hist.forEach(s => {
+const qs = Array.isArray(s.questions) ? s.questions : JSON.parse(s.questions || “[]”);
+qs.forEach(q => {
+if (!ss[q.skill]) ss[q.skill] = { c:0, t:0 };
+ss[q.skill].t++;
+if (q.correct) ss[q.skill].c++;
+});
+});
+
+const groups = S.sec === “abilities”
+? { “كمي”:“abilities_q”, “لفظي”:“abilities_v” }
+: { “رياضيات”:“academic_math”, “فيزياء”:“academic_phys”, “كيمياء”:“academic_chem”, “أحياء”:“academic_bio” };
+
+const cd = Object.entries(groups).map(([name]) => {
+const skls = Object.keys(ss);
+const tct = skls.reduce((a, sk) => a + (ss[sk]?.c||0), 0);
+const ttt = skls.reduce((a, sk) => a + (ss[sk]?.t||0), 0);
+return { name, pct: ttt ? Math.round((tct/ttt)*100) : 0 };
+}).filter(d => d.pct > 0);
+
+const cc = document.getElementById(“chartCard”);
+if (cd.length) {
+cc.style.display = “block”;
+document.getElementById(“mainChart”).innerHTML = cd.map(d =>
+`<div class="bar-row"> <div class="bar-lbl">${d.name}</div> <div class="bar-track"><div class="bar-fill ${lvl(d.pct).c}" style="width:${d.pct}%"></div></div> <div class="bar-pct">${d.pct}%</div> </div>`).join(””);
+} else cc.style.display = “none”;
+
+if (!Object.keys(ss).length) {
+document.getElementById(“subjCards”).innerHTML = ‘<div class="pg-empty">أكمل تدريبات أولاً لرؤية التحليل</div>’;
+return;
+}
+
+document.getElementById(“subjCards”).innerHTML = Object.entries(groups).map(([name, section]) => {
+const skls = Object.keys(ss).map(sk => ({ skill: sk, …ss[sk] }));
+const tct = skls.reduce((a,b) => a+b.c, 0);
+const ttt = skls.reduce((a,b) => a+b.t, 0);
+const pct = ttt ? Math.round((tct/ttt)*100) : 0;
+const { l, lv } = lvl(pct);
+const ic = {“كمي”:“📐”,“لفظي”:“📝”,“رياضيات”:“🔢”,“فيزياء”:“⚡”,“كيمياء”:“🧪”,“أحياء”:“🧬”}[name]||“📚”;
+const skH = skls.filter(s => s.t > 0).map(s => {
+const sp = Math.round((s.c/s.t)*100);
+const { c } = lvl(sp);
+return `<div class="sk-row"> <div style="flex:1"><div class="sk-name">${s.skill}</div><div class="sk-stats">${s.c}/${s.t} صحيح</div></div> <div class="sk-bar"><div class="sk-bar-f ${c}" style="width:${sp}%"></div></div> <div class="sk-pct">${sp}%</div> <button class="sk-train" onclick="startSkTrain('${s.skill}')">تدريب</button> </div>`;
+}).join(””);
+return `<div class="subj-card" id="sc_${name}"> <div class="subj-head" onclick="toggleSubj('${name}')"> <div class="subj-ic">${ic}</div> <div class="subj-info"><div class="subj-name">${name}</div><div class="subj-meta">${ttt} سؤال — ${tct} صحيح</div></div> <span class="subj-lvl ${lv}">${l}</span> <span class="subj-chev">›</span> </div> <div class="subj-skills">${skH || '<div style="color:var(--text3);font-size:11px">لا توجد بيانات</div>'}</div> </div>`;
+}).join(””);
+}
+function toggleSubj(n) { document.getElementById(“sc_”+n)?.classList.toggle(“open”); }
+function startSkTrain(sk) { showPage(“dashPage”); setTimeout(() => startExtra(“skill”, sk), 80); }
+
+/* ── REPORTS ── */
+async function buildReports() {
+const uid = S.user?.id;
+let hist = [];
+try {
+hist = await sb(“sessions”,“GET”,null,`?student_id=eq.${uid}&section=eq.${S.sec}&order=created_at.desc&limit=60`);
+} catch(e) {
+try { hist = JSON.parse(localStorage.getItem(`mq_sessions_${uid}`) || “[]”).filter(s => s.section === S.sec); } catch(e2) {}
+}
+
+const last8 = […hist].reverse().slice(-8);
+document.getElementById(“wkBars”).innerHTML = last8.length
+? last8.map(s => {
+const h = Math.max(3, Math.round((s.score/100)*60));
+const col = s.score>=80?“var(–green)”:s.score>=50?“var(–navy)”:“var(–red)”;
+const dt = s.created_at || s.date || “”;
+const label = dt ? new Date(dt).toLocaleDateString(“ar”,{month:“numeric”,day:“numeric”}) : “”;
+return `<div class="wk-bar-item"> <div class="wk-bar-v">${s.score}%</div> <div class="wk-bar-f" style="height:${h}px;background:${col}"></div> <div class="wk-bar-lb">${label}</div> </div>`;
+}).join(””)
+: ‘<div class="pg-empty">لا توجد بيانات</div>’;
+
+const today = new Date();
+const dots = [];
+for (let i = 29; i >= 0; i–) {
+const d = new Date(today); d.setDate(today.getDate() - i);
+const ds = d.toISOString().slice(0, 10);
+const done = hist.some(s => {
+const dt = s.created_at || s.date || “”;
+return dt.slice(0, 10) === ds;
+});
+dots.push(`<div class="streak-dot ${i===0?"sd-today":done?"sd-done":"sd-miss"}">${i===0?"●":done?"✓":"·"}</div>`);
+}
+document.getElementById(“streakRow”).innerHTML = dots.join(””);
+
+const tS = hist.length;
+const avgS = tS ? Math.round(hist.reduce((a,b) => a+(b.score||0), 0) / tS) : 0;
+const tQ = hist.reduce((a,b) => a+(b.total||0), 0);
+const tC = hist.reduce((a,b) => a+(b.correct||0), 0);
+document.getElementById(“rpStats”).innerHTML = ` <div class="rp-stat"><div class="rp-stat-val">${tS}</div><div class="rp-stat-lbl">جلسات</div></div> <div class="rp-stat"><div class="rp-stat-val">${avgS}%</div><div class="rp-stat-lbl">متوسط</div></div> <div class="rp-stat"><div class="rp-stat-val">${tQ}</div><div class="rp-stat-lbl">أسئلة</div></div> <div class="rp-stat"><div class="rp-stat-val">${tQ?Math.round((tC/tQ)*100):0}%</div><div class="rp-stat-lbl">صحة</div></div>`;
+
+const ss = {};
+hist.forEach(s => {
+const qs = Array.isArray(s.questions) ? s.questions : JSON.parse(s.questions || “[]”);
+qs.forEach(q => {
+if (!ss[q.skill]) ss[q.skill] = { c:0, t:0 };
+ss[q.skill].t++;
+if (q.correct) ss[q.skill].c++;
+});
+});
+const weak = Object.entries(ss)
+.map(([skill, d]) => ({ skill, pct: Math.round((d.c/d.t)*100) }))
+.filter(x => x.pct < 70)
+.sort((a,b) => a.pct-b.pct)
+.slice(0, 5);
+document.getElementById(“weakList”).innerHTML = weak.length
+? weak.map(w => `<div class="weak-row"> <div class="weak-name">${w.skill}</div> <div class="bar-track" style="flex:1"><div class="bar-fill fill-weak" style="width:${w.pct}%"></div></div> <div class="weak-pct">${w.pct}%</div> </div>`).join(””)
+: ‘<div class="pg-empty">لا توجد مهارات ضعيفة 🎉</div>’;
+}
+
+/* ── SETTINGS ── */
+function buildSettings() {
+document.getElementById(“stN”).textContent = S.user?.name || “—”;
+document.getElementById(“stSch”).textContent = S.user?.school_name || “—”;
+document.getElementById(“tgE”).classList.toggle(“on”, S.settings.exp !== false);
+document.getElementById(“tgT”).classList.toggle(“on”, S.settings.timer !== false);
+}
+function toggleSt(k) {
+S.settings[k] = !S.settings[k];
+const map = { exp:“tgE”, timer:“tgT” };
+document.getElementById(map[k])?.classList.toggle(“on”, S.settings[k]);
+}
+function openPwModal() { document.getElementById(“pwModal”).classList.add(“open”); }
+function closePwModal() {
+document.getElementById(“pwModal”).classList.remove(“open”);
+[“pwOld”,“pwNew”,“pwConf”].forEach(id => document.getElementById(id).value = “”);
+}
+async function changePw() {
+const old = document.getElementById(“pwOld”).value.trim();
+const nw  = document.getElementById(“pwNew”).value.trim();
+const cf  = document.getElementById(“pwConf”).value.trim();
+if (!old || !nw || !cf) { toast(“يرجى ملء جميع الحقول”, “err”); return; }
+if (nw !== cf) { toast(“كلمتا المرور غير متطابقتين”, “err”); return; }
+if (old !== S.user?.password) { toast(“كلمة المرور الحالية غير صحيحة”, “err”); return; }
+try {
+await sb(“students”,“PATCH”,{ password: nw }, `?id=eq.${S.user.id}`);
+S.user.password = nw;
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+closePwModal(); toast(“✓ تم تغيير كلمة المرور”, “ok”);
+} catch(e) { toast(“خطأ في الحفظ”, “err”); }
+}
+function confirmClearHistory() {
+showConfirm(“مسح سجل التدريب”, “سيتم حذف جميع جلساتك، هل أنت متأكد؟”, async () => {
+try {
+await sb(“sessions”,“DELETE”,null,`?student_id=eq.${S.user.id}`);
+} catch(e) {
+localStorage.removeItem(`mq_sessions_${S.user.id}`);
+}
+closeM(“confirmM”); toast(“✓ تم مسح السجل”, “ok”);
+});
+}
+
+/* ── MODALS / TOAST ── */
+function closeM(id) { document.getElementById(id).classList.remove(“open”); }
+function showTrial() { document.getElementById(“trialM”).classList.add(“open”); }
+function exitSession() { closeM(“exitM”); clearInterval(S.timer); S.sessionType = “”; goDash(); }
+
+function showConfirm(title, sub, onOk) {
+document.getElementById(“confirmTitle”).textContent = title;
+document.getElementById(“confirmSub”).textContent = sub;
+document.getElementById(“confirmOkBtn”).onclick = onOk;
+document.getElementById(“confirmM”).classList.add(“open”);
+}
+
+let toastTimer;
+function toast(msg, type=“ok”) {
+const w = document.getElementById(“toastWrap”);
+const el = document.createElement(“div”);
+el.className = `toast t-${type}`;
+el.textContent = msg;
+w.appendChild(el);
+setTimeout(() => el.remove(), 3000);
+}
+
+/* ── START ── */
+window.addEventListener(“DOMContentLoaded”, init);
+
+/* ════════════════════════════════════════
+MAQAM — الجزء الثالث: JavaScript الأساسي
+Supabase + Auth + Session + Questions
+════════════════════════════════════════ */
+
+/* ── SUPABASE ── */
+const SB_URL = “https://bljrbdrbrmbhcmjkuxzu.supabase.co”;
+const SB_KEY = “eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsanJiZHJicm1iaGNtamt1eHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDYwOTUsImV4cCI6MjA5MzQ4MjA5NX0.YjmoRWuV8BFvfvwwrZ3aSglVZ3AlDIfNcl1zOREOOc4”;
+
+async function sb(table, method=“GET”, body=null, query=””) {
+const opts = {
+method,
+headers: {
+“Content-Type”: “application/json”,
+“Authorization”: `Bearer ${SB_KEY}`,
+“apikey”: SB_KEY,
+“Prefer”: method === “POST” ? “return=representation” : “”
+}
+};
+if (body) opts.body = JSON.stringify(body);
+const res = await fetch(`${SB_URL}/rest/v1/${table}${query}`, opts);
+if (!res.ok) {
+const err = await res.text();
+throw new Error(err);
+}
+const text = await res.text();
+return text ? JSON.parse(text) : [];
+}
+
+/* ── STATE ── */
+let S = {
+user: null,
+sec: “abilities”,
+qs: [], idx: 0, ans: [],
+answered: false, selected: null,
+sessionType: “”, prevPage: “homePage”,
+timer: null, timerSecs: 0, lastQT: “”,
+settings: { exp: true, timer: true },
+qBank: [], qBankFilter: “all”,
+adminTaps: 0
+};
+
+/* ── INIT ── */
+async function init() {
+setDb(“loading”, “جاري الاتصال”);
+try {
+await sb(“schools”, “GET”, null, “?limit=1”);
+setDb(“ok”, “Supabase ✓”);
+// تحديث عداد الأسئلة في الصفحة الرئيسية
+const qCount = await sb(“questions”, “GET”, null, “?select=id&limit=1”);
+loadQCount();
+} catch(e) {
+setDb(“err”, “خطأ في الاتصال”);
+}
+// استعادة الجلسة من localStorage
+const saved = localStorage.getItem(“mq_user”);
+if (saved) {
+try {
+S.user = JSON.parse(saved);
+updateDrw();
+if (S.user.type === “student”) loadDash();
+else if (S.user.type === “school”) loadSchDash();
+else if (S.user.type === “teacher”) loadTcDash();
+else if (S.user.type === “admin”) loadAdDash();
+} catch(e) { localStorage.removeItem(“mq_user”); }
+}
+document.getElementById(“ls”).classList.add(“hide”);
+}
+
+async function loadQCount() {
+try {
+const res = await fetch(`${SB_URL}/rest/v1/questions?select=count`, {
+headers: { “Authorization”: `Bearer ${SB_KEY}`, “apikey”: SB_KEY, “Prefer”: “count=exact” }
+});
+const count = res.headers.get(“content-range”);
+if (count) {
+const n = parseInt(count.split(”/”)[1]) || 0;
+const el = document.getElementById(“homeQCount”);
+if (el) el.textContent = “+” + n.toLocaleString(“ar”);
+}
+} catch(e) {}
+}
+
+/* ── PAGES ── */
+function showPage(id, back=false) {
+document.querySelectorAll(”.page”).forEach(p => p.classList.remove(“active”));
+document.getElementById(id).classList.add(“active”);
+window.scrollTo(0, 0);
+document.getElementById(“nvBack”).classList.toggle(“show”, back);
+}
+function handleBack() {
+if (S.sessionType) { document.getElementById(“exitM”).classList.add(“open”); return; }
+showPage(S.prevPage || “homePage”);
+}
+function setDb(s, l) {
+document.getElementById(“dbDot”).className = “db-dot “ + s;
+document.getElementById(“dbLbl”).textContent = l;
+}
+function goHome() { S.prevPage = “homePage”; updateNav(); showPage(“homePage”); }
+function goAbout() { S.prevPage = “homePage”; showPage(“aboutPage”, true); }
+function goLogin() { S.prevPage = “homePage”; showPage(“loginPage”, true); }
+function goDash() { S.user?.type === “student” ? loadDash() : goHome(); }
+function retryS() { S.lastQT ? startExtra(S.lastQT) : startDaily(); }
+function goAnalysis() { buildAnalysis(); showPage(“anPage”, true); }
+function goReports() { buildReports(); showPage(“rpPage”, true); }
+function goSettings() { buildSettings(); showPage(“stPage”, true); }
+
+function updateNav() {
+const logo = document.getElementById(“nvLogo”);
+const user = document.getElementById(“nvUser”);
+if (!S.user || S.user.type === “guest”) {
+logo.style.display = “”; user.style.display = “none”;
+} else {
+logo.style.display = “none”; user.style.display = “flex”;
+document.getElementById(“nvUN”).textContent = S.user.name || S.user.id;
+document.getElementById(“nvUS”).textContent = S.user.school_name || “”;
+}
+}
+
+/* ── DRAWER ── */
+function openDrw() { document.getElementById(“drw”).classList.add(“open”); document.getElementById(“drwOv”).classList.add(“open”); }
+function closeDrw() { document.getElementById(“drw”).classList.remove(“open”); document.getElementById(“drwOv”).classList.remove(“open”); }
+function updateDrw() {
+[“gMenu”,“stMenu”,“tcMenu”,“scMenu”,“adMenu”].forEach(m => document.getElementById(m).style.display = “none”);
+const du = document.getElementById(“drwUser”);
+const dt = document.getElementById(“drwST”);
+du.style.display = “none”; dt.style.display = “none”;
+updateNav();
+if (!S.user || S.user.type === “guest”) {
+document.getElementById(“gMenu”).style.display = “block”; return;
+}
+du.style.display = “block”;
+document.getElementById(“drwN”).textContent = S.user.name || S.user.id;
+const meta = S.user.type === “student” ? `طالب — ${S.user.school_name||""}` :
+S.user.type === “teacher” ? `معلم — ${S.user.school_name||""}` :
+S.user.type === “school”  ? `مدرسة` : “مدير النظام”;
+document.getElementById(“drwM”).textContent = meta;
+if (S.user.type === “student”) {
+document.getElementById(“stMenu”).style.display = “block”;
+dt.style.display = “grid”;
+document.getElementById(“dTabAb”).classList.toggle(“active”, S.sec === “abilities”);
+document.getElementById(“dTabAc”).classList.toggle(“active”, S.sec === “academic”);
+} else if (S.user.type === “teacher”) document.getElementById(“tcMenu”).style.display = “block”;
+else if (S.user.type === “school”)   document.getElementById(“scMenu”).style.display = “block”;
+else if (S.user.type === “admin”)    document.getElementById(“adMenu”).style.display = “block”;
+}
+function switchSec(s) {
+S.sec = s;
+[“tabAb”,“tabAc”,“dTabAb”,“dTabAc”].forEach(id => {
+const el = document.getElementById(id); if (!el) return;
+el.classList.toggle(“active”, s === “abilities” ? id.includes(“Ab”) : !id.includes(“Ab”));
+});
+fillWkCard(); buildAcCards(); updateDrw();
+}
+
+/* ── LOGIN ── */
+let loginTab = “student”;
+function switchLoginTab(t) {
+loginTab = t;
+document.getElementById(“ltStudent”).classList.toggle(“active”, t === “student”);
+document.getElementById(“ltSchool”).classList.toggle(“active”, t === “school”);
+document.getElementById(“loginStudent”).style.display = t === “student” ? “” : “none”;
+document.getElementById(“loginSchool”).style.display  = t === “school”  ? “” : “none”;
+}
+
+// 5 ضغطات على الرمز الخفي = صفحة المدير
+let tapCount = 0;
+function tapAdmin() {
+tapCount++;
+if (tapCount >= 5) { tapCount = 0; showPage(“adLPage”, true); }
+setTimeout(() => { tapCount = 0; }, 3000);
+}
+
+async function doLogin() {
+const id = document.getElementById(“sId”).value.trim();
+const pw = document.getElementById(“sPw”).value.trim();
+if (!id || !pw) { toast(“يرجى إدخال البيانات”, “err”); return; }
+try {
+const rows = await sb(“students”, “GET”, null, `?id=eq.${id}&password=eq.${pw}&limit=1`);
+if (!rows.length) { toast(“بيانات غير صحيحة”, “err”); return; }
+const std = rows[0];
+// جلب اسم المدرسة
+let school_name = “”;
+try {
+const schs = await sb(“schools”, “GET”, null, `?id=eq.${std.school_id}&select=name&limit=1`);
+if (schs.length) school_name = schs[0].name;
+} catch(e) {}
+S.user = { …std, type: “student”, school_name };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadDash();
+} catch(e) { toast(“خطأ في الاتصال”, “err”); }
+}
+
+async function doSchLogin() {
+const id = document.getElementById(“schId”).value.trim();
+const pw = document.getElementById(“schPw”).value.trim();
+if (!id || !pw) { toast(“يرجى إدخال البيانات”, “err”); return; }
+try {
+// تحقق معلم أولاً
+const tchs = await sb(“teachers”, “GET”, null, `?id=eq.${id}&password=eq.${pw}&limit=1`);
+if (tchs.length) {
+const tc = tchs[0];
+let school_name = “”;
+try { const s = await sb(“schools”,“GET”,null,`?id=eq.${tc.school_id}&select=name&limit=1`); if(s.length) school_name=s[0].name; } catch(e) {}
+S.user = { …tc, type: “teacher”, school_name };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadTcDash(); return;
+}
+// تحقق مدرسة
+const schs = await sb(“schools”, “GET”, null, `?id=eq.${id}&password=eq.${pw}&limit=1`);
+if (schs.length) {
+S.user = { …schs[0], type: “school”, school_name: schs[0].name };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadSchDash(); return;
+}
+toast(“بيانات غير صحيحة”, “err”);
+} catch(e) { toast(“خطأ في الاتصال”, “err”); }
+}
+
+async function doAdLogin() {
+const id = document.getElementById(“adId”).value.trim();
+const pw = document.getElementById(“adPw”).value.trim();
+if (id === “admin” && pw === “mqam2026”) {
+S.user = { id: “admin”, name: “المدير”, type: “admin” };
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+updateDrw(); loadAdDash();
+} else toast(“بيانات غير صحيحة”, “err”);
+}
+
+function logout() {
+S.user = null;
+localStorage.removeItem(“mq_user”);
+updateDrw(); closeDrw(); goHome();
+}
+
+/* ── STUDENT DASH ── */
+async function loadDash() {
+S.sessionType = “”; S.prevPage = “dashPage”;
+updateNav(); fillDateBar(); await fillWkCard(); buildAcCards();
+showPage(“dashPage”);
+}
+
+function fillDateBar() {
+const n = new Date();
+const days = [“الأحد”,“الاثنين”,“الثلاثاء”,“الأربعاء”,“الخميس”,“الجمعة”,“السبت”];
+const mons = [“يناير”,“فبراير”,“مارس”,“أبريل”,“مايو”,“يونيو”,“يوليو”,“أغسطس”,“سبتمبر”,“أكتوبر”,“نوفمبر”,“ديسمبر”];
+document.getElementById(“dDay”).textContent = days[n.getDay()];
+document.getElementById(“dDate”).textContent = `${n.getDate()} ${mons[n.getMonth()]} ${n.getFullYear()}`;
+const sun = new Date(n); sun.setDate(n.getDate() - n.getDay());
+const thu = new Date(sun); thu.setDate(sun.getDate() + 4);
+document.getElementById(“dWkR”).textContent = `${sun.getDate()} - ${thu.getDate()} ${mons[sun.getMonth()]}`;
+}
+
+function wkKey() {
+const n = new Date(), s = new Date(n.getFullYear(), 0, 1);
+return n.getFullYear() + “*W” + Math.ceil((n - s) / 604800000) + “*” + S.sec;
+}
+function todayKey() { return [“sun”,“mon”,“tue”,“wed”,“thu”,“fri”,“sat”][new Date().getDay()]; }
+
+async function getProgress() {
+const uid = S.user?.id || “guest”;
+const wk  = wkKey();
+try {
+const rows = await sb(“sessions”, “GET”, null,
+`?student_id=eq.${uid}&week_key=eq.${wk}&type=eq.daily&select=day_key`);
+const done = {};
+rows.forEach(r => { if (r.day_key) done[r.day_key] = true; });
+return done;
+} catch(e) {
+// fallback localStorage
+const lk = `mq_pg_${uid}_${wk}`;
+try { return JSON.parse(localStorage.getItem(lk)) || {}; } catch(e2) { return {}; }
+}
+}
+
+async function fillWkCard() {
+const done = await getProgress();
+const keys = [“sun”,“mon”,“tue”,“wed”,“thu”];
+const names = [“أحد”,“اثنين”,“ثلاثاء”,“أربعاء”,“خميس”];
+const today = new Date().getDay();
+const isTrial = S.user?.type === “guest”;
+
+document.getElementById(“wkT”).textContent =
+`ابدأ التدريب الأسبوعي — ${S.sec === "abilities" ? "القدرات" : "التحصيلي"}`;
+
+const row = document.getElementById(“daysRow”);
+row.innerHTML = “”;
+keys.forEach((k, i) => {
+let cls = “day-pill”, ic = “○”;
+if (done[k]) { cls += “ done”; ic = “✅”; }
+else if (isTrial || today < 1) { cls += “ today”; ic = “📝”; }
+else {
+if (i === today && today < 5) { cls += “ today”; ic = “📝”; }
+else if (i < today && today < 5) { cls += “ missed”; ic = “❌”; }
+else { cls += “ locked”; ic = “🔒”; }
+}
+row.innerHTML += `<div class="${cls}"><span class="day-name">${names[i]}</span><span class="day-ic">${ic}</span></div>`;
+});
+
+const doneCount = keys.filter(k => done[k]).length;
+const pct = Math.round((doneCount / 5) * 100);
+document.getElementById(“wkB”).textContent = `${doneCount}/5`;
+document.getElementById(“wkBF”).style.width = pct + “%”;
+document.getElementById(“wkBP”).textContent = pct + “%”;
+}
+
+function buildAcCards() {
+const isAb = S.sec === “abilities”;
+document.getElementById(“acCards”).innerHTML = ` <div class="ac" onclick="startDaily()"> <div class="ac-ic ic-navy">📝</div> <div class="ac-body"> <div class="ac-title">ابدأ التدريب اليومي</div> <div class="ac-desc">${isAb ? "10 أسئلة كمي ولفظي" : "10 أسئلة من جميع المواد"}</div> </div> <span class="badge b-navy">جديد</span> <div class="ac-arr">←</div> </div> <div class="ac" id="examCard" onclick="startExam()"> <div class="ac-ic ic-green">✅</div> <div class="ac-body"> <div class="ac-title">الاختبار الأسبوعي</div> <div class="ac-desc" id="examDesc">أكمل 5 تدريبات أولاً</div> </div> <span class="badge b-amber" id="examBadge">🔒 مقفل</span> <div class="ac-arr">←</div> </div> <div class="ac" onclick="showExModal()"> <div class="ac-ic ic-gold">🎯</div> <div class="ac-body"> <div class="ac-title">تدريب إضافي</div> <div class="ac-desc">${isAb ? "كمي أو لفظي أو مختلط" : "اختر مادة أو الكل"}</div> </div> <div class="ac-arr">←</div> </div>`;
+updateExamCard();
+}
+
+async function updateExamCard() {
+const done = await getProgress();
+const doneCount = [“sun”,“mon”,“tue”,“wed”,“thu”].filter(k => done[k]).length;
+const today = new Date().getDay();
+const isTrial = S.user?.type === “guest”;
+const card = document.getElementById(“examCard”);
+const desc = document.getElementById(“examDesc”);
+const badge = document.getElementById(“examBadge”);
+if (!card) return;
+if (doneCount >= 5 && (today === 5 || isTrial)) {
+card.classList.remove(“disabled”);
+desc.textContent = “الاختبار مفتوح الآن”;
+badge.className = “badge b-green”; badge.textContent = “✅ متاح”;
+} else if (doneCount >= 5) {
+card.classList.remove(“disabled”);
+desc.textContent = “يفتح يوم الجمعة”;
+badge.className = “badge b-amber”; badge.textContent = “📅 الجمعة”;
+} else {
+card.classList.add(“disabled”);
+desc.textContent = `أكمل ${5 - doneCount} تدريبات إضافية`;
+badge.className = “badge b-amber”; badge.textContent = `🔒 ${doneCount}/5`;
+}
+}
+
+/* ── QUESTIONS FROM SUPABASE ── */
+const shuf = a => […a].sort(() => Math.random() - .5);
+
+async function fetchQuestions(section, limit=10) {
+try {
+// جلب أسئلة عشوائية من Supabase
+const rows = await sb(“questions”, “GET”, null,
+`?section=eq.${section}&limit=${limit * 5}&select=*`);
+return shuf(rows).slice(0, limit);
+} catch(e) {
+toast(“خطأ في جلب الأسئلة”, “err”);
+return [];
+}
+}
+
+async function buildMixed(n, sec) {
+if (sec === “abilities”) {
+const h = Math.floor(n / 2);
+const [q, v] = await Promise.all([
+fetchQuestions(“abilities_q”, h),
+fetchQuestions(“abilities_v”, n - h)
+]);
+return shuf([…q, …v]);
+}
+const [m, p, c, b] = await Promise.all([
+fetchQuestions(“academic_math”, Math.ceil(n/4)),
+fetchQuestions(“academic_phys”, Math.ceil(n/4)),
+fetchQuestions(“academic_chem”, Math.ceil(n/4)),
+fetchQuestions(“academic_bio”,  Math.floor(n/4))
+]);
+return shuf([…m, …p, …c, …b]).slice(0, n);
+}
+
+/* ── SESSIONS ── */
+async function startDaily() {
+if (S.user?.type !== “guest”) {
+const done = await getProgress();
+const keys = [“sun”,“mon”,“tue”,“wed”,“thu”];
+const today = new Date().getDay();
+if (today >= 5) { toast(“التدريب من الأحد إلى الخميس”, “err”); return; }
+const k = keys[today];
+if (done[k]) { toast(“أكملت تدريب اليوم ✓”, “ok”); return; }
+}
+toast(“جاري تحميل الأسئلة…”, “ok”);
+S.sessionType = “daily”; S.lastQT = “daily”;
+const qs = await buildMixed(10, S.sec);
+if (!qs.length) return;
+startSession(qs, “التدريب اليومي”, false);
+}
+
+async function startExam() {
+const done = await getProgress();
+const doneCount = [“sun”,“mon”,“tue”,“wed”,“thu”].filter(k => done[k]).length;
+if (doneCount < 5) { toast(“أكمل 5 تدريبات أولاً”, “err”); return; }
+if (new Date().getDay() !== 5 && S.user?.type !== “guest”) {
+toast(“الاختبار متاح يوم الجمعة فقط”, “err”); return;
+}
+toast(“جاري تحميل الاختبار…”, “ok”);
+S.sessionType = “exam”; S.lastQT = “exam”;
+const qs = await buildMixed(40, S.sec);
+if (!qs.length) return;
+startSession(qs, “الاختبار الأسبوعي”, S.settings.timer !== false, 25 * 60);
+}
+
+function showExModal() {
+const isAb = S.sec === “abilities”;
+document.getElementById(“exSub”).textContent = isAb ? “اختر نوع التدريب” : “اختر المادة”;
+document.getElementById(“exBtns”).innerHTML = isAb
+? `<button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('mixed')">📚 كمي ولفظي</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('q_only')">📐 كمي فقط</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('v_only')">📝 لفظي فقط</button> <button class="btn btn-ghost btn-block" onclick="closeM('exM')">إلغاء</button>`
+: `<button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('acmix')">📖 جميع المواد</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('math')">🔢 رياضيات</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('phys')">⚡ فيزياء</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('chem')">🧪 كيمياء</button> <button class="btn btn-outline btn-block" onclick="closeM('exM');startExtra('bio')">🧬 أحياء</button> <button class="btn btn-ghost btn-block" onclick="closeM('exM')">إلغاء</button>`;
+document.getElementById(“exM”).classList.add(“open”);
+}
+
+async function startExtra(type, skillName=null) {
+S.sessionType = “extra”; S.lastQT = type;
+toast(“جاري تحميل الأسئلة…”, “ok”);
+let qs = [], label = “”;
+if (type === “skill” && skillName) {
+try {
+const rows = await sb(“questions”,“GET”,null,`?skill=eq.${encodeURIComponent(skillName)}&limit=50`);
+qs = shuf(rows).slice(0, 10); label = skillName;
+} catch(e) { toast(“خطأ”, “err”); return; }
+} else {
+const map = {
+mixed:  [() => buildMixed(10, “abilities”),   “مختلط”],
+q_only: [() => fetchQuestions(“abilities_q”,10), “كمي”],
+v_only: [() => fetchQuestions(“abilities_v”,10), “لفظي”],
+acmix:  [() => buildMixed(10, “academic”),    “تحصيلي”],
+math:   [() => fetchQuestions(“academic_math”,10), “رياضيات”],
+phys:   [() => fetchQuestions(“academic_phys”,10), “فيزياء”],
+chem:   [() => fetchQuestions(“academic_chem”,10), “كيمياء”],
+bio:    [() => fetchQuestions(“academic_bio”, 10), “أحياء”],
+};
+const [fn, lbl] = map[type] || [() => buildMixed(10, S.sec), “إضافي”];
+qs = await fn(); label = lbl;
+}
+if (!qs.length) { toast(“لا توجد أسئلة كافية”, “err”); return; }
+startSession(qs, label, false);
+}
+
+function startTrial() {
+S.user = { id: “guest_” + Date.now(), name: “زائر”, type: “guest”, school_name: “” };
+S.sec = “abilities”; updateDrw(); loadDash();
+toast(“مرحباً! ابدأ تدريبك الأول 👋”, “ok”);
+}
+
+function startSession(qs, label, hasTimer, secs=0) {
+S.qs = qs; S.idx = 0; S.ans = []; S.answered = false; S.selected = null;
+document.getElementById(“qLbl”).textContent = label;
+const tb = document.getElementById(“timerBar”);
+if (hasTimer && secs > 0) {
+S.timerSecs = secs; tb.style.display = “flex”; startTimer();
+} else { tb.style.display = “none”; clearInterval(S.timer); }
+loadQ(); showPage(“qPage”, true);
+}
+
+/* ── QUESTION DISPLAY ── */
+function getSkLbl(q) {
+const map = {
+abilities_q:“📐 كمي”, abilities_v:“📝 لفظي”,
+academic_math:“🔢 رياضيات”, academic_phys:“⚡ فيزياء”,
+academic_chem:“🧪 كيمياء”, academic_bio:“🧬 أحياء”
+};
+return `${map[q.section]||"🎯"} — ${q.skill}`;
+}
+
+function loadQ() {
+const q = S.qs[S.idx], tot = S.qs.length;
+document.getElementById(“qCnt”).textContent = `${S.idx+1}/${tot}`;
+document.getElementById(“qBF”).style.width = Math.round((S.idx / tot) * 100) + “%”;
+document.getElementById(“qSk”).textContent = getSkLbl(q);
+document.getElementById(“qText”).textContent = q.text;
+const sw = document.getElementById(“qSvg”);
+if (q.svg) { sw.style.display = “flex”; sw.innerHTML = q.svg; }
+else { sw.style.display = “none”; sw.innerHTML = “”; }
+const L = [“أ”,“ب”,“ج”,“د”];
+const opts = Array.isArray(q.opts) ? q.opts : JSON.parse(q.opts || “[]”);
+document.getElementById(“opts”).innerHTML = opts.map((o, i) =>
+`<button class="opt" onclick="pick(${i})"> <span class="opt-letter">${L[i]}</span> <span class="opt-text">${o}</span> <span class="opt-ric" id="oic${i}"></span> </button>`).join(””);
+document.getElementById(“expBox”).classList.remove(“show”);
+document.getElementById(“rptDd”).classList.remove(“open”);
+document.getElementById(“rptOtherInp”).value = “”;
+const cb = document.getElementById(“confBtn”), nb = document.getElementById(“nextBtn”);
+cb.className = “confirm-btn inactive”; cb.style.display = “”;
+nb.className = “next-btn inactive”;
+nb.textContent = S.idx === tot - 1 ? “إنهاء ←” : “ابدأ التالي ←”;
+S.answered = false; S.selected = null;
+if (window.MathJax?.typesetPromise)
+MathJax.typesetPromise([document.getElementById(“qText”), document.getElementById(“opts”)]).catch(()=>{});
+}
+
+function pick(i) {
+if (S.answered) return;
+S.selected = i;
+document.querySelectorAll(”.opt”).forEach((b, idx) => b.classList.toggle(“selected”, idx === i));
+document.getElementById(“confBtn”).className = “confirm-btn active”;
+}
+
+function confirmAns() {
+if (S.answered || S.selected === null) return;
+S.answered = true;
+const i = S.selected, q = S.qs[S.idx];
+S.ans[S.idx] = i;
+const btns = document.querySelectorAll(”.opt”);
+btns.forEach(b => b.disabled = true);
+btns[i].classList.remove(“selected”);
+btns[i].classList.add(i === q.ans ? “correct” : “wrong”);
+document.getElementById(`oic${i}`).textContent = i === q.ans ? “✓” : “✗”;
+if (i !== q.ans) {
+btns[q.ans].classList.add(“correct”);
+document.getElementById(`oic${q.ans}`).textContent = “✓”;
+}
+document.getElementById(“qBF”).style.width = Math.round(((S.idx+1)/S.qs.length)*100) + “%”;
+if (S.settings.exp !== false) {
+document.getElementById(“expText”).textContent = q.exp || “”;
+document.getElementById(“expBox”).classList.add(“show”);
+if (window.MathJax?.typesetPromise)
+MathJax.typesetPromise([document.getElementById(“expBox”)]).catch(()=>{});
+}
+document.getElementById(“confBtn”).style.display = “none”;
+document.getElementById(“nextBtn”).className = “next-btn active”;
+}
+
+function nextQ() {
+if (!S.answered) return;
+if (S.idx < S.qs.length - 1) { S.idx++; loadQ(); }
+else finishSession();
+}
+
+/* ── FINISH ── */
+async function finishSession() {
+clearInterval(S.timer);
+const tot = S.qs.length;
+const cor = S.qs.filter((q, i) => S.ans[i] === q.ans).length;
+const pct = Math.round((cor / tot) * 100);
+const prev = S.sessionType;
+S.sessionType = “”;
+
+// حفظ الجلسة في Supabase
+if (S.user?.type === “student”) {
+const sessionData = {
+student_id: S.user.id,
+section: S.sec,
+type: prev,
+score: pct,
+correct: cor,
+total: tot,
+week_key: wkKey(),
+day_key: prev === “daily” ? todayKey() : null,
+questions: S.qs.map((q, idx) => ({ id: q.id, skill: q.skill, correct: S.ans[idx] === q.ans }))
+};
+try {
+await sb(“sessions”, “POST”, sessionData);
+} catch(e) {
+// fallback localStorage
+const lsKey = `mq_sessions_${S.user.id}`;
+const hist = JSON.parse(localStorage.getItem(lsKey) || “[]”);
+hist.unshift({ …sessionData, date: new Date().toISOString() });
+if (hist.length > 60) hist.pop();
+localStorage.setItem(lsKey, JSON.stringify(hist));
+}
+}
+
+// عرض النتيجة
+const [t, s] = pct >= 85 ? [“🏆 ممتاز!”, “أداء رائع”] :
+pct >= 70 ? [“👍 جيد جداً!”, “نتيجة جيدة”] :
+pct >= 50 ? [“💪 جيد!”, “واصل التدريب”] :
+[“📚 واصل!”, “لكل مجتهد مقام”];
+document.getElementById(“sPct”).textContent = pct + “%”;
+document.getElementById(“resC”).textContent = cor;
+document.getElementById(“resW”).textContent = tot - cor;
+document.getElementById(“resTot”).textContent = tot;
+document.getElementById(“scoreArc”).style.strokeDashoffset = 307.9 - (pct / 100) * 307.9;
+document.getElementById(“resT”).textContent = t;
+document.getElementById(“resS”).textContent = s;
+
+// تحليل المستوى
+const levelEl = document.getElementById(“resLevel”);
+const levelText = document.getElementById(“resLevelText”);
+const levelMsg = pct >= 85 ? “مستواك ممتاز! أداؤك يتجاوز معظم الطلاب. واصل هذا المستوى وركّز على الحفاظ عليه.” :
+pct >= 70 ? “مستواك جيد جداً. بقليل من التدريب الإضافي ستصل للمستوى الممتاز.” :
+pct >= 50 ? “مستواك متوسط. ركّز على المهارات الضعيفة عبر التدريب الإضافي.” :
+“تحتاج لمزيد من التدريب. لا تستسلم — كل طالب مجتهد يصل لهدفه!”;
+levelEl.style.display = “”; levelText.textContent = levelMsg;
+
+// لوحة الأسئلة
+document.getElementById(“resQsPanel”).innerHTML = S.qs.map((q, idx) => {
+const correct = S.ans[idx] === q.ans;
+const opts = Array.isArray(q.opts) ? q.opts : JSON.parse(q.opts || “[]”);
+return `<div class="res-q-item"> <div class="res-q-ic">${correct ? "✅" : "❌"}</div> <div class="res-q-info"> <div class="res-q-text">${q.text}</div> <div class="res-q-skill">${getSkLbl(q)} | الإجابة: ${opts[q.ans] || ""}</div> </div> </div>`;
+}).join(””);
+document.getElementById(“resQsPanel”).classList.remove(“open”);
+
+showPage(“resPage”);
+}
+
+function toggleResQs() {
+document.getElementById(“resQsPanel”).classList.toggle(“open”);
+}
+
+/* ── TIMER ── */
+function startTimer() {
+clearInterval(S.timer);
+S.timer = setInterval(() => {
+S.timerSecs–;
+const m = String(Math.floor(S.timerSecs / 60)).padStart(2, “0”);
+const s = String(S.timerSecs % 60).padStart(2, “0”);
+const el = document.getElementById(“timerV”);
+el.textContent = `${m}:${s}`;
+el.classList.toggle(“warn”, S.timerSecs <= 60);
+if (S.timerSecs <= 0) { clearInterval(S.timer); toast(“انتهى الوقت!”, “err”); finishSession(); }
+}, 1000);
+}
+
+/* ── REPORT ── */
+function toggleRpt(e) { e.stopPropagation(); document.getElementById(“rptDd”).classList.toggle(“open”); }
+
+async function sendRpt(type) {
+const q = S.qs[S.idx];
+try {
+await sb(“reports”, “POST”, {
+question_id: q.id, question_text: q.text,
+type, student_id: S.user?.id || “guest”
+});
+} catch(e) {}
+document.getElementById(“rptDd”).classList.remove(“open”);
+toast(“✓ تم إرسال البلاغ للمدير”, “ok”);
+}
+
+async function sendRptOther() {
+const note = document.getElementById(“rptOtherInp”).value.trim();
+if (!note) { toast(“اكتب ملاحظتك أولاً”, “err”); return; }
+const q = S.qs[S.idx];
+try {
+await sb(“reports”, “POST”, {
+question_id: q.id, question_text: q.text,
+type: “أخرى”, note, student_id: S.user?.id || “guest”
+});
+} catch(e) {}
+document.getElementById(“rptDd”).classList.remove(“open”);
+toast(“✓ تم إرسال البلاغ”, “ok”);
+}
+document.addEventListener(“click”, () => document.getElementById(“rptDd”)?.classList.remove(“open”));
+
+/* ── ANALYSIS ── */
+function lvl(p) {
+if (p >= 80) return { l:“ممتاز”, c:“fill-great”, lv:“lvl-great” };
+if (p >= 65) return { l:“جيد”, c:“fill-good”, lv:“lvl-good” };
+if (p >= 50) return { l:“متوسط”, c:“fill-avg”, lv:“lvl-avg” };
+return { l:“يحتاج تحسين”, c:“fill-weak”, lv:“lvl-weak” };
+}
+
+async function buildAnalysis() {
+const uid = S.user?.id;
+let hist = [];
+try {
+hist = await sb(“sessions”,“GET”,null,`?student_id=eq.${uid}&section=eq.${S.sec}&order=created_at.desc&limit=60`);
+} catch(e) {
+try { hist = JSON.parse(localStorage.getItem(`mq_sessions_${uid}`) || “[]”).filter(s => s.section === S.sec); } catch(e2) {}
+}
+
+document.getElementById(“anSub”).textContent = `تحليل أدائك في ${S.sec === "abilities" ? "القدرات" : "التحصيلي"}`;
+const ts = hist.length;
+const avg = ts ? Math.round(hist.reduce((a,b) => a + (b.score||0), 0) / ts) : 0;
+const tq = hist.reduce((a,b) => a + (b.total||0), 0);
+const tc = hist.reduce((a,b) => a + (b.correct||0), 0);
+document.getElementById(“ovCards”).innerHTML = ` <div class="ov-card"><div class="ov-val">${ts}</div><div class="ov-lbl">جلسة</div></div> <div class="ov-card"><div class="ov-val">${avg}%</div><div class="ov-lbl">متوسط</div></div> <div class="ov-card"><div class="ov-val">${tq}</div><div class="ov-lbl">سؤال</div></div> <div class="ov-card"><div class="ov-val">${tc}</div><div class="ov-lbl">صحيح</div></div>`;
+
+const ss = {};
+hist.forEach(s => {
+const qs = Array.isArray(s.questions) ? s.questions : JSON.parse(s.questions || “[]”);
+qs.forEach(q => {
+if (!ss[q.skill]) ss[q.skill] = { c:0, t:0 };
+ss[q.skill].t++;
+if (q.correct) ss[q.skill].c++;
+});
+});
+
+const groups = S.sec === “abilities”
+? { “كمي”:“abilities_q”, “لفظي”:“abilities_v” }
+: { “رياضيات”:“academic_math”, “فيزياء”:“academic_phys”, “كيمياء”:“academic_chem”, “أحياء”:“academic_bio” };
+
+const cd = Object.entries(groups).map(([name]) => {
+const skls = Object.keys(ss);
+const tct = skls.reduce((a, sk) => a + (ss[sk]?.c||0), 0);
+const ttt = skls.reduce((a, sk) => a + (ss[sk]?.t||0), 0);
+return { name, pct: ttt ? Math.round((tct/ttt)*100) : 0 };
+}).filter(d => d.pct > 0);
+
+const cc = document.getElementById(“chartCard”);
+if (cd.length) {
+cc.style.display = “block”;
+document.getElementById(“mainChart”).innerHTML = cd.map(d =>
+`<div class="bar-row"> <div class="bar-lbl">${d.name}</div> <div class="bar-track"><div class="bar-fill ${lvl(d.pct).c}" style="width:${d.pct}%"></div></div> <div class="bar-pct">${d.pct}%</div> </div>`).join(””);
+} else cc.style.display = “none”;
+
+if (!Object.keys(ss).length) {
+document.getElementById(“subjCards”).innerHTML = ‘<div class="pg-empty">أكمل تدريبات أولاً لرؤية التحليل</div>’;
+return;
+}
+
+document.getElementById(“subjCards”).innerHTML = Object.entries(groups).map(([name, section]) => {
+const skls = Object.keys(ss).map(sk => ({ skill: sk, …ss[sk] }));
+const tct = skls.reduce((a,b) => a+b.c, 0);
+const ttt = skls.reduce((a,b) => a+b.t, 0);
+const pct = ttt ? Math.round((tct/ttt)*100) : 0;
+const { l, lv } = lvl(pct);
+const ic = {“كمي”:“📐”,“لفظي”:“📝”,“رياضيات”:“🔢”,“فيزياء”:“⚡”,“كيمياء”:“🧪”,“أحياء”:“🧬”}[name]||“📚”;
+const skH = skls.filter(s => s.t > 0).map(s => {
+const sp = Math.round((s.c/s.t)*100);
+const { c } = lvl(sp);
+return `<div class="sk-row"> <div style="flex:1"><div class="sk-name">${s.skill}</div><div class="sk-stats">${s.c}/${s.t} صحيح</div></div> <div class="sk-bar"><div class="sk-bar-f ${c}" style="width:${sp}%"></div></div> <div class="sk-pct">${sp}%</div> <button class="sk-train" onclick="startSkTrain('${s.skill}')">تدريب</button> </div>`;
+}).join(””);
+return `<div class="subj-card" id="sc_${name}"> <div class="subj-head" onclick="toggleSubj('${name}')"> <div class="subj-ic">${ic}</div> <div class="subj-info"><div class="subj-name">${name}</div><div class="subj-meta">${ttt} سؤال — ${tct} صحيح</div></div> <span class="subj-lvl ${lv}">${l}</span> <span class="subj-chev">›</span> </div> <div class="subj-skills">${skH || '<div style="color:var(--text3);font-size:11px">لا توجد بيانات</div>'}</div> </div>`;
+}).join(””);
+}
+function toggleSubj(n) { document.getElementById(“sc_”+n)?.classList.toggle(“open”); }
+function startSkTrain(sk) { showPage(“dashPage”); setTimeout(() => startExtra(“skill”, sk), 80); }
+
+/* ── REPORTS ── */
+async function buildReports() {
+const uid = S.user?.id;
+let hist = [];
+try {
+hist = await sb(“sessions”,“GET”,null,`?student_id=eq.${uid}&section=eq.${S.sec}&order=created_at.desc&limit=60`);
+} catch(e) {
+try { hist = JSON.parse(localStorage.getItem(`mq_sessions_${uid}`) || “[]”).filter(s => s.section === S.sec); } catch(e2) {}
+}
+
+const last8 = […hist].reverse().slice(-8);
+document.getElementById(“wkBars”).innerHTML = last8.length
+? last8.map(s => {
+const h = Math.max(3, Math.round((s.score/100)*60));
+const col = s.score>=80?“var(–green)”:s.score>=50?“var(–navy)”:“var(–red)”;
+const dt = s.created_at || s.date || “”;
+const label = dt ? new Date(dt).toLocaleDateString(“ar”,{month:“numeric”,day:“numeric”}) : “”;
+return `<div class="wk-bar-item"> <div class="wk-bar-v">${s.score}%</div> <div class="wk-bar-f" style="height:${h}px;background:${col}"></div> <div class="wk-bar-lb">${label}</div> </div>`;
+}).join(””)
+: ‘<div class="pg-empty">لا توجد بيانات</div>’;
+
+const today = new Date();
+const dots = [];
+for (let i = 29; i >= 0; i–) {
+const d = new Date(today); d.setDate(today.getDate() - i);
+const ds = d.toISOString().slice(0, 10);
+const done = hist.some(s => {
+const dt = s.created_at || s.date || “”;
+return dt.slice(0, 10) === ds;
+});
+dots.push(`<div class="streak-dot ${i===0?"sd-today":done?"sd-done":"sd-miss"}">${i===0?"●":done?"✓":"·"}</div>`);
+}
+document.getElementById(“streakRow”).innerHTML = dots.join(””);
+
+const tS = hist.length;
+const avgS = tS ? Math.round(hist.reduce((a,b) => a+(b.score||0), 0) / tS) : 0;
+const tQ = hist.reduce((a,b) => a+(b.total||0), 0);
+const tC = hist.reduce((a,b) => a+(b.correct||0), 0);
+document.getElementById(“rpStats”).innerHTML = ` <div class="rp-stat"><div class="rp-stat-val">${tS}</div><div class="rp-stat-lbl">جلسات</div></div> <div class="rp-stat"><div class="rp-stat-val">${avgS}%</div><div class="rp-stat-lbl">متوسط</div></div> <div class="rp-stat"><div class="rp-stat-val">${tQ}</div><div class="rp-stat-lbl">أسئلة</div></div> <div class="rp-stat"><div class="rp-stat-val">${tQ?Math.round((tC/tQ)*100):0}%</div><div class="rp-stat-lbl">صحة</div></div>`;
+
+const ss = {};
+hist.forEach(s => {
+const qs = Array.isArray(s.questions) ? s.questions : JSON.parse(s.questions || “[]”);
+qs.forEach(q => {
+if (!ss[q.skill]) ss[q.skill] = { c:0, t:0 };
+ss[q.skill].t++;
+if (q.correct) ss[q.skill].c++;
+});
+});
+const weak = Object.entries(ss)
+.map(([skill, d]) => ({ skill, pct: Math.round((d.c/d.t)*100) }))
+.filter(x => x.pct < 70)
+.sort((a,b) => a.pct-b.pct)
+.slice(0, 5);
+document.getElementById(“weakList”).innerHTML = weak.length
+? weak.map(w => `<div class="weak-row"> <div class="weak-name">${w.skill}</div> <div class="bar-track" style="flex:1"><div class="bar-fill fill-weak" style="width:${w.pct}%"></div></div> <div class="weak-pct">${w.pct}%</div> </div>`).join(””)
+: ‘<div class="pg-empty">لا توجد مهارات ضعيفة 🎉</div>’;
+}
+
+/* ── SETTINGS ── */
+function buildSettings() {
+document.getElementById(“stN”).textContent = S.user?.name || “—”;
+document.getElementById(“stSch”).textContent = S.user?.school_name || “—”;
+document.getElementById(“tgE”).classList.toggle(“on”, S.settings.exp !== false);
+document.getElementById(“tgT”).classList.toggle(“on”, S.settings.timer !== false);
+}
+function toggleSt(k) {
+S.settings[k] = !S.settings[k];
+const map = { exp:“tgE”, timer:“tgT” };
+document.getElementById(map[k])?.classList.toggle(“on”, S.settings[k]);
+}
+function openPwModal() { document.getElementById(“pwModal”).classList.add(“open”); }
+function closePwModal() {
+document.getElementById(“pwModal”).classList.remove(“open”);
+[“pwOld”,“pwNew”,“pwConf”].forEach(id => document.getElementById(id).value = “”);
+}
+async function changePw() {
+const old = document.getElementById(“pwOld”).value.trim();
+const nw  = document.getElementById(“pwNew”).value.trim();
+const cf  = document.getElementById(“pwConf”).value.trim();
+if (!old || !nw || !cf) { toast(“يرجى ملء جميع الحقول”, “err”); return; }
+if (nw !== cf) { toast(“كلمتا المرور غير متطابقتين”, “err”); return; }
+if (old !== S.user?.password) { toast(“كلمة المرور الحالية غير صحيحة”, “err”); return; }
+try {
+await sb(“students”,“PATCH”,{ password: nw }, `?id=eq.${S.user.id}`);
+S.user.password = nw;
+localStorage.setItem(“mq_user”, JSON.stringify(S.user));
+closePwModal(); toast(“✓ تم تغيير كلمة المرور”, “ok”);
+} catch(e) { toast(“خطأ في الحفظ”, “err”); }
+}
+function confirmClearHistory() {
+showConfirm(“مسح سجل التدريب”, “سيتم حذف جميع جلساتك، هل أنت متأكد؟”, async () => {
+try {
+await sb(“sessions”,“DELETE”,null,`?student_id=eq.${S.user.id}`);
+} catch(e) {
+localStorage.removeItem(`mq_sessions_${S.user.id}`);
+}
+closeM(“confirmM”); toast(“✓ تم مسح السجل”, “ok”);
+});
+}
+
+/* ── MODALS / TOAST ── */
+function closeM(id) { document.getElementById(id).classList.remove(“open”); }
+function showTrial() { document.getElementById(“trialM”).classList.add(“open”); }
+function exitSession() { closeM(“exitM”); clearInterval(S.timer); S.sessionType = “”; goDash(); }
+
+function showConfirm(title, sub, onOk) {
+document.getElementById(“confirmTitle”).textContent = title;
+document.getElementById(“confirmSub”).textContent = sub;
+document.getElementById(“confirmOkBtn”).onclick = onOk;
+document.getElementById(“confirmM”).classList.add(“open”);
+}
+
+let toastTimer;
+function toast(msg, type=“ok”) {
+const w = document.getElementById(“toastWrap”);
+const el = document.createElement(“div”);
+el.className = `toast t-${type}`;
+el.textContent = msg;
+w.appendChild(el);
+setTimeout(() => el.remove(), 3000);
+}
+
+/* ── START ── */
+window.addEventListener(“DOMContentLoaded”, init);
